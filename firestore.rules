@@ -1,0 +1,119 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Fonctions utilitaires ----------
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isNonEmptyString(value, maxLength) {
+      return value is string && value.size() > 0 && value.size() <= maxLength;
+    }
+
+    function isOptionalUrl(value) {
+      return value == null || (value is string && value.size() <= 2048);
+    }
+
+    // ---------- Profils utilisateurs ----------
+
+    function isValidUser(data) {
+      return data.keys().hasOnly(['displayName', 'email', 'photoURL', 'createdAt'])
+        && isNonEmptyString(data.displayName, 50)
+        && isOptionalUrl(data.get('photoURL', null));
+    }
+
+    // Le profil (e-mail compris) n'est lisible que par son propriétaire
+    match /users/{userId} {
+      allow read: if isUser(userId);
+      allow create: if isUser(userId)
+        && isValidUser(request.resource.data)
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == request.time;
+      // L'e-mail et la date de création ne sont pas modifiables
+      allow update: if isUser(userId)
+        && isValidUser(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'photoURL']);
+      allow delete: if false;
+    }
+
+    // ---------- Adresses ----------
+
+    function isValidAddress(data) {
+      return data.keys().hasOnly([
+          'ownerId', 'ownerName', 'name', 'description', 'isPublic',
+          'latitude', 'longitude', 'photoURL', 'createdAt'
+        ])
+        && data.keys().hasAll(['ownerId', 'ownerName', 'name', 'description', 'isPublic', 'latitude', 'longitude'])
+        && isNonEmptyString(data.ownerName, 100)
+        && isNonEmptyString(data.name, 80)
+        && data.description is string && data.description.size() <= 500
+        && data.isPublic is bool
+        && data.latitude is number && data.latitude >= -90 && data.latitude <= 90
+        && data.longitude is number && data.longitude >= -180 && data.longitude <= 180
+        && isOptionalUrl(data.get('photoURL', null));
+    }
+
+    function canReadAddress(address) {
+      return isSignedIn() && (address.isPublic == true || address.ownerId == request.auth.uid);
+    }
+
+    match /addresses/{addressId} {
+      // Adresse publique : visible par tous les utilisateurs connectés.
+      // Adresse privée : visible uniquement par son propriétaire.
+      allow read: if canReadAddress(resource.data);
+
+      allow create: if isSignedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && isValidAddress(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+
+      // Seul le propriétaire peut modifier (sans changer de propriétaire) ou supprimer
+      allow update: if isUser(resource.data.ownerId)
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && isValidAddress(request.resource.data);
+      allow delete: if isUser(resource.data.ownerId);
+
+      // ---------- Avis (commentaire + note + photo) ----------
+
+      function parentAddress() {
+        return get(/databases/$(database)/documents/addresses/$(addressId)).data;
+      }
+
+      function isValidReview(data) {
+        return data.keys().hasOnly([
+            'authorId', 'authorName', 'authorPhotoURL', 'rating', 'comment', 'photoURL', 'createdAt'
+          ])
+          && data.keys().hasAll(['authorId', 'authorName', 'rating', 'comment'])
+          && isNonEmptyString(data.authorName, 100)
+          && isOptionalUrl(data.get('authorPhotoURL', null))
+          && data.rating is int && data.rating >= 1 && data.rating <= 5
+          && isNonEmptyString(data.comment, 500)
+          && isOptionalUrl(data.get('photoURL', null));
+      }
+
+      match /reviews/{reviewId} {
+        allow read: if canReadAddress(parentAddress());
+
+        // On ne peut commenter qu'une adresse publique, en son propre nom
+        allow create: if isSignedIn()
+          && parentAddress().isPublic == true
+          && request.resource.data.authorId == request.auth.uid
+          && isValidReview(request.resource.data)
+          && request.resource.data.createdAt == request.time;
+
+        allow update: if false;
+
+        // L'auteur de l'avis ou le propriétaire de l'adresse peut supprimer l'avis
+        allow delete: if isUser(resource.data.authorId) || isUser(parentAddress().ownerId);
+      }
+    }
+  }
+}

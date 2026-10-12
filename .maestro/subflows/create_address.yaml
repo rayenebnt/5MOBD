@@ -1,0 +1,37 @@
+# Création d'une adresse depuis la carte : ADDRESS_NAME, ADDRESS_DESCRIPTION, PUBLIC ("true" / "false")
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "tab-map"
+- tapOn:
+    id: "add-address-button"
+- tapOn:
+    id: "address-name-input"
+- inputText: ${ADDRESS_NAME}
+- tapOn:
+    id: "address-description-input"
+- inputText: ${ADDRESS_DESCRIPTION}
+- hideKeyboard
+- runFlow:
+    when:
+      true: ${PUBLIC == 'true'}
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "address-public-switch"
+      - tapOn:
+          id: "address-public-switch"
+      - assertVisible: "Adresse publique"
+# L'emplacement par défaut est la position actuelle (repère sur la carte)
+- scrollUntilVisible:
+    element:
+      id: "location-picker-marker"
+- scrollUntilVisible:
+    element:
+      id: "save-address-button"
+- tapOn:
+    id: "save-address-button"
+- extendedWaitUntil:
+    visible:
+      id: "map-view"
+    timeout: 20000

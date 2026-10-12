@@ -1,0 +1,10 @@
+# Configuration Maestro : exécute les parcours e2e dans l'ordre
+flows:
+  - "flows/*"
+executionOrder:
+  continueOnFailure: false
+  flowsOrder:
+    - 01_authentification
+    - 02_carte
+    - 03_adresses
+    - 04_adresses_publiques_et_avis

@@ -1,0 +1,46 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Uniquement des images de moins de 5 Mo
+    function isValidImage() {
+      return request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // Photo de profil : users/{uid}/avatar.jpg
+    match /users/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow create, update: if isUser(userId) && isValidImage();
+      allow delete: if isUser(userId);
+    }
+
+    // Photo d'une adresse : addresses/{uid}/{addressId}.jpg
+    match /addresses/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow create, update: if isUser(userId) && isValidImage();
+      allow delete: if isUser(userId);
+    }
+
+    // Photo jointe à un avis : reviews/{addressId}/{uid}/{reviewId}.jpg
+    match /reviews/{addressId}/{userId}/{fileName} {
+      allow read: if isSignedIn();
+      allow create, update: if isUser(userId) && isValidImage();
+      allow delete: if isUser(userId);
+    }
+
+    // Tout le reste est interdit
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

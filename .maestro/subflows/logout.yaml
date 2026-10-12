@@ -1,0 +1,11 @@
+# Déconnexion depuis l'onglet Profil
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "tab-profile"
+- tapOn:
+    id: "logout-button"
+- extendedWaitUntil:
+    visible:
+      id: "login-submit"
+    timeout: 10000

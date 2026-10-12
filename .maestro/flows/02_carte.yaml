@@ -1,0 +1,30 @@
+# Carte centrée sur la position de l'utilisateur
+appId: ${APP_ID}
+---
+- runFlow: ../subflows/launch.yaml
+- evalScript: ${output.email = 'carte.' + Date.now() + '@e2e.test'}
+- runFlow:
+    file: ../subflows/register.yaml
+    env:
+      NAME: "Carte E2E"
+      EMAIL: ${output.email}
+      PASSWORD: "motdepasse"
+
+- assertVisible:
+    id: "map-view"
+- assertVisible: "Mes adresses publiques"
+- assertVisible: "Mes adresses privées"
+- assertVisible: "Adresses des autres"
+# La localisation est autorisée : pas de message d'erreur
+- assertNotVisible:
+    id: "location-denied"
+- tapOn:
+    id: "recenter-button"
+
+# Le bouton + ouvre le formulaire de création
+- tapOn:
+    id: "add-address-button"
+- assertVisible:
+    id: "address-name-input"
+- back
+- runFlow: ../subflows/logout.yaml

@@ -1,0 +1,90 @@
+# Adresses publiques des autres utilisateurs et avis
+appId: ${APP_ID}
+---
+- runFlow: ../subflows/launch.yaml
+- evalScript: ${output.suffix = '' + Date.now()}
+- evalScript: ${output.publicName = 'Cafe partage ' + output.suffix}
+- evalScript: ${output.privateName = 'Cachette ' + output.suffix}
+
+# Alice partage une adresse publique et garde une adresse privée
+- runFlow:
+    file: ../subflows/register.yaml
+    env:
+      NAME: "Alice Partage"
+      EMAIL: ${'alice.' + output.suffix + '@e2e.test'}
+      PASSWORD: "motdepasse"
+- runFlow:
+    file: ../subflows/create_address.yaml
+    env:
+      ADDRESS_NAME: ${output.publicName}
+      ADDRESS_DESCRIPTION: "Le meilleur cafe"
+      PUBLIC: "true"
+- runFlow:
+    file: ../subflows/create_address.yaml
+    env:
+      ADDRESS_NAME: ${output.privateName}
+      ADDRESS_DESCRIPTION: "Rien a voir"
+      PUBLIC: "false"
+- runFlow: ../subflows/logout.yaml
+
+# Bob voit uniquement l'adresse publique d'Alice
+- runFlow:
+    file: ../subflows/register.yaml
+    env:
+      NAME: "Bob Avis"
+      EMAIL: ${'bob.' + output.suffix + '@e2e.test'}
+      PASSWORD: "motdepasse"
+- tapOn:
+    id: "tab-explore"
+- scrollUntilVisible:
+    element:
+      text: ${output.publicName}
+- assertVisible: "par Alice Partage"
+- assertNotVisible: ${output.privateName}
+
+# Bob laisse un avis
+- tapOn: ${output.publicName}
+- assertVisible: "Le meilleur cafe"
+- assertNotVisible:
+    id: "delete-address-button"
+- scrollUntilVisible:
+    element:
+      id: "review-form"
+- tapOn:
+    id: "review-rating-star-4"
+- scrollUntilVisible:
+    element:
+      id: "review-comment-input"
+- tapOn:
+    id: "review-comment-input"
+- inputText: "Tres bon accueil"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "submit-review-button"
+- tapOn:
+    id: "submit-review-button"
+- scrollUntilVisible:
+    element:
+      text: "Tres bon accueil"
+    direction: UP
+- assertVisible: "Bob Avis"
+- assertVisible: "4.0 / 5 · 1 avis"
+- back
+- runFlow: ../subflows/logout.yaml
+
+# Alice voit l'avis laissé sur son adresse
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: ${'alice.' + output.suffix + '@e2e.test'}
+      PASSWORD: "motdepasse"
+- tapOn:
+    id: "tab-my-addresses"
+- tapOn: ${output.publicName}
+- scrollUntilVisible:
+    element:
+      text: "Tres bon accueil"
+- assertNotVisible:
+    id: "review-form"
+- runFlow: ../subflows/logout.yaml

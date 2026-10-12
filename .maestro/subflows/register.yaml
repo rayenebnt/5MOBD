@@ -1,0 +1,24 @@
+# Inscription : NAME, EMAIL, PASSWORD
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "go-to-register"
+- tapOn:
+    id: "register-name-input"
+- inputText: ${NAME}
+- tapOn:
+    id: "register-email-input"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "register-password-input"
+- inputText: ${PASSWORD}
+- tapOn:
+    id: "register-confirm-input"
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "register-submit"
+- extendedWaitUntil:
+    visible:
+      id: "map-view"
+    timeout: 20000

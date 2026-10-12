@@ -1,0 +1,69 @@
+# Inscription, déconnexion, erreur de connexion puis connexion
+appId: ${APP_ID}
+---
+- runFlow: ../subflows/launch.yaml
+- evalScript: ${output.email = 'alice.' + Date.now() + '@e2e.test'}
+
+# Inscription
+- runFlow:
+    file: ../subflows/register.yaml
+    env:
+      NAME: "Alice E2E"
+      EMAIL: ${output.email}
+      PASSWORD: "motdepasse"
+- assertVisible:
+    id: "map-view"
+
+# Le profil affiche les informations du compte
+- tapOn:
+    id: "tab-profile"
+- assertVisible: "Alice E2E"
+- assertVisible: ${output.email}
+
+# Déconnexion
+- runFlow: ../subflows/logout.yaml
+
+# Mauvais mot de passe
+- tapOn:
+    id: "login-email-input"
+- inputText: ${output.email}
+- tapOn:
+    id: "login-password-input"
+- inputText: "mauvais-mot-de-passe"
+- hideKeyboard
+- tapOn:
+    id: "login-submit"
+- extendedWaitUntil:
+    visible: "E-mail ou mot de passe incorrect."
+    timeout: 10000
+
+# Connexion avec le bon mot de passe
+- tapOn:
+    id: "login-password-input"
+- eraseText: 40
+- inputText: "motdepasse"
+- hideKeyboard
+- tapOn:
+    id: "login-submit"
+- extendedWaitUntil:
+    visible:
+      id: "map-view"
+    timeout: 20000
+
+# La session est conservée après redémarrage de l'application
+- stopApp
+- runFlow:
+    when:
+      true: ${APP_ID == 'host.exp.exponent'}
+    commands:
+      - openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      true: ${APP_ID != 'host.exp.exponent'}
+    commands:
+      - launchApp
+- extendedWaitUntil:
+    visible:
+      id: "map-view"
+    timeout: 30000
+- runFlow: ../subflows/logout.yaml

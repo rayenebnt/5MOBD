@@ -1,0 +1,85 @@
+# Création d'adresses privée et publique, consultation et suppression
+appId: ${APP_ID}
+---
+- runFlow: ../subflows/launch.yaml
+- evalScript: ${output.email = 'adresses.' + Date.now() + '@e2e.test'}
+- runFlow:
+    file: ../subflows/register.yaml
+    env:
+      NAME: "Adresses E2E"
+      EMAIL: ${output.email}
+      PASSWORD: "motdepasse"
+
+# Le nom est obligatoire
+- tapOn:
+    id: "add-address-button"
+- scrollUntilVisible:
+    element:
+      id: "save-address-button"
+- tapOn:
+    id: "save-address-button"
+- scrollUntilVisible:
+    element:
+      id: "address-name-input-error"
+    direction: UP
+- assertVisible: "Le nom est obligatoire."
+- back
+
+# Adresse privée
+- runFlow:
+    file: ../subflows/create_address.yaml
+    env:
+      ADDRESS_NAME: "Chez mes parents"
+      ADDRESS_DESCRIPTION: "Adresse secrete"
+      PUBLIC: "false"
+
+# Adresse publique
+- runFlow:
+    file: ../subflows/create_address.yaml
+    env:
+      ADDRESS_NAME: "Le Petit Bistrot"
+      ADDRESS_DESCRIPTION: "Cuisine maison"
+      PUBLIC: "true"
+
+# Mes adresses publiques et privées
+- tapOn:
+    id: "tab-my-addresses"
+- assertVisible: "Chez mes parents"
+- assertVisible: "Le Petit Bistrot"
+- tapOn:
+    id: "filter-private"
+- assertVisible: "Chez mes parents"
+- assertNotVisible: "Le Petit Bistrot"
+- tapOn:
+    id: "filter-public"
+- assertVisible: "Le Petit Bistrot"
+- assertNotVisible: "Chez mes parents"
+- tapOn:
+    id: "filter-all"
+
+# Détail d'une adresse privée
+- tapOn: "Chez mes parents"
+- assertVisible:
+    id: "address-name"
+- assertVisible: "Adresse secrete"
+- assertVisible: "Privée"
+- scrollUntilVisible:
+    element:
+      id: "reviews-private"
+
+# Suppression
+- scrollUntilVisible:
+    element:
+      id: "delete-address-button"
+    direction: UP
+- tapOn:
+    id: "delete-address-button"
+- assertVisible: "Supprimer cette adresse.*"
+- tapOn: "(?i)supprimer"
+- extendedWaitUntil:
+    visible:
+      id: "my-addresses-list"
+    timeout: 10000
+- assertNotVisible: "Chez mes parents"
+- assertVisible: "Le Petit Bistrot"
+- runFlow: ../subflows/logout.yaml

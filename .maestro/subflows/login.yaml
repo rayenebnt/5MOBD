@@ -1,0 +1,16 @@
+# Connexion : EMAIL, PASSWORD
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "login-email-input"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "login-submit"
+- extendedWaitUntil:
+    visible:
+      id: "map-view"
+    timeout: 20000
