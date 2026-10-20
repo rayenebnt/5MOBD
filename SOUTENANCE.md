@@ -1,6 +1,6 @@
 # Guide de soutenance : démo sur iPhone avec Expo Go
 
-La démo se fait **sur ton iPhone**, dans l'application **Expo Go** (App Store), et Firebase est remplacé par les **émulateurs Firebase** qui tournent sur ton PC. Pas de projet Firebase, rien à payer, pas d'Android Studio. **VS Code** reste ton éditeur : c'est dans son terminal que tu lances toutes les commandes.
+La démo se fait **sur ton iPhone**, dans l'application **Expo Go** (App Store), et Firebase est remplacé par les **émulateurs Firebase** qui tournent sur ton PC. Pas de projet Firebase, rien à payer, pas besoin d'Android Studio pour la démo. **VS Code** reste ton éditeur : c'est dans son terminal que tu lances toutes les commandes.
 
 Sommaire :
 
@@ -46,6 +46,11 @@ Dans la nouvelle fenêtre VS Code (terminal Command Prompt) :
 
 ```bash
 npm install
+```
+
+Puis lancer une première fois les émulateurs Firebase. **Windows va afficher deux fenêtres de pare-feu** (« Node.js JavaScript Runtime » et « OpenJDK Platform binary ») : cocher **Réseaux privés ET Réseaux publics**, puis **Autoriser l'accès** (sinon l'iPhone ne pourra pas joindre le PC).
+
+```bash
 npm run emulators
 ```
 
@@ -64,7 +69,7 @@ L'iPhone se connecte directement au PC : à l'application (port 8081) et aux ém
 - **À la maison** : PC et iPhone sur le même Wi-Fi.
 - **À l'école (recommandé)** : les Wi-Fi d'école bloquent souvent les échanges entre appareils. Utiliser le **partage de connexion de l'iPhone** : iPhone > Réglages > **Partage de connexion** > activer **« Autoriser d'autres utilisateurs »**, puis connecter le PC à ce Wi-Fi. La carte (Apple Plans) utilise alors les données mobiles.
 
-**Pare-feu Windows** : au premier lancement, Windows demande d'autoriser **Node.js** et **Java** : cocher **Réseaux privés ET Réseaux publics**, puis **Autoriser**. (Windows classe souvent un partage de connexion en réseau « public ».)
+**Pare-feu Windows** : Node.js et Java doivent être autorisés sur les **réseaux privés ET publics** (Windows classe souvent un partage de connexion en réseau « public »). Si tu as cliqué Annuler ou coché un seul type de réseau, voir [Dépannage](#8-dépannage).
 
 > Pas besoin de tunnel (ngrok, localhost.run…) : un tunnel ne ferait passer que l'application, pas les émulateurs Firebase.
 
@@ -151,10 +156,10 @@ npm run test:coverage    # idem avec la couverture (~97 %)
 npm run test:firebase    # 41 tests : règles de sécurité + parcours complet sur émulateurs Firebase
 ```
 
-**Tests e2e (Maestro)** : Maestro pilote un **émulateur Android** ou un simulateur iOS (sur Mac), pas un vrai iPhone. Deux possibilités :
+**Tests e2e (Maestro)** : Maestro pilote un **émulateur Android** ou un simulateur iOS (sur Mac), pas un vrai iPhone.
 
-- **Les exécuter une fois et filmer l'écran** (recommandé, 10 pts) : installer [Android Studio](https://developer.android.com/studio) et un téléphone virtuel « Google Play » (API 35), le [CLI Maestro](https://docs.maestro.dev/getting-started/installing-maestro), puis suivre la section *Tests e2e* du [README](README.md#tests-e2e-avec-maestro-npm-run-e2e) (`npm run emulators`, `npm run start:e2e`, `npm run e2e`). Filmer avec la Xbox Game Bar (Win+Alt+R) et montrer la vidéo pendant la soutenance.
-- **Sinon**, montrer et expliquer les parcours dans VS Code (`.maestro/flows/`).
+- **Par défaut** : montrer et expliquer les parcours dans VS Code (`.maestro/flows/`).
+- **Optionnel** (plusieurs Go à installer, uniquement pour filmer les tests e2e une fois) : installer [Android Studio](https://developer.android.com/studio) et un téléphone virtuel « Google Play » (API 35), le [CLI Maestro](https://docs.maestro.dev/getting-started/installing-maestro), puis suivre la section *Tests e2e* du [README](README.md#tests-e2e-avec-maestro-npm-run-e2e) (`npm run emulators`, `npm run start:e2e`, `npm run e2e`). Filmer avec la Xbox Game Bar (Win+Alt+R) et montrer la vidéo pendant la soutenance.
 
 **Plan B** : filmer une démo complète sur l'iPhone (Centre de contrôle > **Enregistrement de l'écran**), au cas où le réseau ne marcherait pas le jour J.
 
@@ -170,7 +175,7 @@ npm run test:firebase    # 41 tests : règles de sécurité + parcours complet s
 - [ ] Terminal 1 : `npm run demo:firebase` (« All emulators ready »)
 - [ ] Terminal 2 : `npm run demo:phone`, application ouverte sur l'iPhone, sur l'**écran de connexion** (si un compte est connecté : Profil > « Se déconnecter »)
 - [ ] Navigateur du PC ouvert sur http://localhost:4000
-- [ ] Résultats des tests et vidéo e2e prêts
+- [ ] Résultats des tests prêts (et vidéo e2e si tu l'as filmée)
 - [ ] iPhone en mode **Ne pas déranger**, luminosité au maximum
 - [ ] Pour montrer l'écran de l'iPhone au jury : adaptateur HDMI de l'iPhone vers le projecteur, ou application de recopie d'écran AirPlay sur le PC (à tester avant)
 
@@ -251,7 +256,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 ### 10. Tests — 25 pts (2 à 3 min)
 
 1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (202 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
-2. **Tests e2e (10 pts)** : la vidéo Maestro, et un parcours ouvert dans VS Code (`.maestro/flows/04_adresses_publiques_et_avis.yaml`).
+2. **Tests e2e (10 pts)** : un parcours ouvert dans VS Code (`.maestro/flows/04_adresses_publiques_et_avis.yaml`), et la vidéo Maestro si tu l'as filmée.
 3. **Storybook (5 pts)** : arrêter le terminal 2 (Ctrl+C), lancer `npm run start:storybook` et scanner le nouveau QR code avec l'iPhone : Storybook s'ouvre avec les 11 composants. Pour revenir à l'application : Ctrl+C, `npm run demo:phone` et scanner à nouveau le QR code.
 
 > Garder Storybook pour la fin : le retour à l'application prend environ une minute.
@@ -266,7 +271,8 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 | PowerShell : « l'exécution de scripts est désactivée sur ce système » | Utiliser le terminal **Command Prompt** (section 1.1), ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
 | « Project is incompatible with this version of Expo Go » | Mettre à jour Expo Go depuis l'App Store (le projet utilise le SDK 54) |
 | Expo Go tourne longtemps puis « Could not connect to the server » | PC et iPhone ne sont pas sur le même réseau, ou l'accès au **réseau local** a été refusé : iPhone > Réglages > **Expo Go** > activer **Réseau local** ; vérifier le pare-feu (section 2) ; essayer le partage de connexion de l'iPhone |
-| Le QR code pointe vers une mauvaise adresse (par ex. `172.x` de WSL ou d'une machine virtuelle) | Dans le terminal Command Prompt : `ipconfig`, noter l'**adresse IPv4** de la carte Wi-Fi, puis `set REACT_NATIVE_PACKAGER_HOSTNAME=<cette adresse>` et relancer `npm run demo:phone` dans le **même** terminal |
+| Le QR code / la ligne `exp://…` affiche `127.0.0.1`, ou une adresse différente de l'**adresse IPv4** de la carte Wi-Fi donnée par `ipconfig` (sur le partage de connexion de l'iPhone, une adresse `172.20.10.x` est normale et correcte) | Dans le terminal Command Prompt : `ipconfig`, noter l'adresse IPv4 de la carte Wi-Fi, puis par exemple `set REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.2` (ton adresse, sans espaces) et relancer `npm run demo:phone` dans le **même** terminal |
+| Pare-feu : j'ai cliqué Annuler ou coché un seul type de réseau | Sécurité Windows > Pare-feu et protection du réseau > **Autoriser une application via le pare-feu** > **Modifier les paramètres** > cocher **Privé** et **Public** pour toutes les lignes « Node.js JavaScript Runtime » et « OpenJDK Platform binary ». Ou plus simple : Paramètres > Réseau et Internet > Wi-Fi > (réseau du partage de connexion) > Type de profil réseau : **Privé** |
 | « Problème de connexion réseau » à l'inscription ou à la connexion | `demo:firebase` n'est pas lancé, ou Java est bloqué par le pare-feu : lancer `demo:firebase`, attendre « All emulators ready », autoriser Java (privé et public), puis `r` dans le terminal 2 |
 | « port taken » au lancement de `demo:firebase`, `demo:prepare` ou des tests | D'anciens émulateurs tournent encore : fermer tous les terminaux ; sinon terminer le processus « OpenJDK Platform binary » dans le Gestionnaire des tâches |
 | `java` introuvable ou mauvaise version | Installer le JDK 21 (section 1.1) puis **redémarrer VS Code** |
