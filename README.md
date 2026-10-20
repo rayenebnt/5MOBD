@@ -72,65 +72,19 @@ npm install
 
 ## Présenter l'application (soutenance)
 
-**Aucun projet Firebase ni paiement n'est nécessaire.** L'application utilise les **émulateurs Firebase** qui tournent sur l'ordinateur (Authentication, Firestore, Storage), avec les mêmes règles de sécurité (`firestore.rules`, `storage.rules`) qu'un vrai projet.
+**Aucun projet Firebase ni paiement n'est nécessaire** : l'application tourne dans un émulateur Android sur le PC et utilise les **émulateurs Firebase** locaux (Authentication, Firestore, Storage), avec les mêmes règles de sécurité qu'un vrai projet.
 
-### Prérequis
+👉 **Guide complet : [SOUTENANCE.md](SOUTENANCE.md)** (installation sous Windows, préparation des données, déroulé de la démo selon le barème, dépannage).
 
-- Node.js 20.18.0 et `npm install`
-- **JDK 21** (par exemple [Eclipse Temurin](https://adoptium.net/)) : nécessaire aux émulateurs Firebase
-- **Android Studio** avec un émulateur Android (recommandé), ou un téléphone Android
-- Une connexion Internet pour les fonds de carte (Google Maps) et pour le premier lancement
-
-### Option recommandée : émulateur Android sur l'ordinateur
-
-Démarrer d'abord l'émulateur depuis Android Studio (*Device Manager* > ▶) et attendre l'écran d'accueil, puis :
+En bref, après avoir démarré le téléphone virtuel depuis Android Studio :
 
 ```bash
-npm run demo:firebase    # terminal 1 : émulateurs Firebase (données sauvegardées)
+npm run demo:firebase    # terminal 1 : émulateurs Firebase (données conservées dans emulator-data/)
 npm run demo:android     # terminal 2 : l'application dans Expo Go sur l'émulateur Android
+npm run demo:save        # sauvegarder les données préparées (pendant que demo:firebase tourne)
 ```
 
-- Au premier lancement, Expo installe automatiquement **Expo Go pour le SDK 53** dans l'émulateur.
-- **Position** : l'émulateur Android est placé en Californie par défaut. Pour centrer la carte ailleurs (ex. Paris) : bouton `⋯` (*Extended controls*) > *Location*, choisir le lieu puis *Set location*, et relancer l'application.
-- **Photos** : glisser-déposer des images sur la fenêtre de l'émulateur pour les ajouter à la galerie, ou utiliser l'appareil photo de l'émulateur (scène virtuelle).
-
-### Autre option : vrai téléphone Android
-
-1. Installer **Expo Go SDK 53** depuis [expo.dev/go](https://expo.dev/go?sdkVersion=53&platform=android&device=true) (la version du Play Store suit le dernier SDK).
-2. Connecter le téléphone et l'ordinateur **au même Wi-Fi** (le partage de connexion du téléphone fonctionne aussi ; les Wi-Fi d'école bloquent souvent les échanges entre appareils).
-3. Lancer `npm run demo:firebase` puis `npm run demo:phone`, et scanner le QR code avec Expo Go. L'adresse de l'ordinateur est détectée automatiquement.
-
-- Sous Windows, autoriser Node.js et Java dans le pare-feu quand il le demande.
-- Les photos enregistrées contiennent l'adresse de l'ordinateur sur le réseau : préparer les données sur le même réseau que celui de la soutenance (ou utiliser l'émulateur Android).
-- iPhone : l'App Store ne propose que la dernière version d'Expo Go, incompatible avec le SDK 53 ; utiliser l'émulateur Android.
-
-### Préparer les données à l'avance
-
-`npm run demo:firebase` recharge au démarrage les données du dossier `emulator-data/` et les y enregistre à l'arrêt.
-
-- **Sauvegarder sans risque** : pendant que `demo:firebase` tourne, lancer `npm run demo:save` dans un autre terminal et attendre « Export complete ».
-- **Arrêter** : un seul **Ctrl+C**, puis attendre la fin de l'arrêt avant de fermer la fenêtre (sous Windows, si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
-- Si « port taken » s'affiche au lancement suivant, d'anciens émulateurs tournent encore : fermer les terminaux, ou terminer le processus Java dans le Gestionnaire des tâches.
-
-Interface des émulateurs (comptes, données, photos, requêtes autorisées / refusées) : http://localhost:4000.
-
-Conseil : préparer deux comptes (par exemple Alice et Bob), quelques adresses publiques et privées avec photos, et un avis.
-
-### Déroulé possible (barème)
-
-| Étape | À montrer |
-| --- | --- |
-| Projet Firebase sécurisé | `firestore.rules`, `storage.rules`, onglet *Requests* de Firestore dans l'interface des émulateurs, résultat de `npm run test:firebase` (voir ci-dessous) |
-| Inscription, connexion, déconnexion | Créer un compte, se déconnecter (Profil), se reconnecter, message en cas de mauvais mot de passe |
-| Photo de profil | Profil > Galerie / Photo, puis Supprimer la photo |
-| Carte | Onglet Carte centré sur la position, légende des repères, bouton de recentrage |
-| Création d'adresse | Bouton `+` : nom, description, photo, interrupteur privée / publique, emplacement |
-| Visualiser les adresses | « Mes adresses » (filtres Publiques / Privées) ; avec l'autre compte, « Explorer » montre seulement les adresses publiques |
-| Avis et photos | Sur l'adresse publique de l'autre compte : note, commentaire et photo |
-| Suppression | Détail de sa propre adresse > Supprimer l'adresse |
-| Tests | Résultats de `npm test`, `npm run test:firebase` et `npm run e2e`, puis Storybook (`npm run start:storybook`) |
-
-**Lancer les tests avant la démonstration** (ou après l'avoir arrêtée) et garder les résultats à l'écran : `npm run test:firebase` et les tests e2e démarrent leurs propres émulateurs sur les mêmes ports que `demo:firebase` (9099, 8080, 9199) et échouent (« port taken ») s'il tourne. Les tests e2e déconnectent aussi Expo Go et déplacent la position de l'émulateur : se reconnecter au compte de démonstration ensuite.
+Prérequis : Node.js 20.18.0, **JDK 21** (émulateurs Firebase), **Android Studio** avec un téléphone virtuel « Google Play ». Avec un vrai téléphone Android (Expo Go SDK 53, même Wi-Fi que le PC) : `npm run demo:phone` à la place de `demo:android`. Sur iPhone, Expo Go de l'App Store ne prend plus en charge le SDK 53.
 
 ## Architecture
 
