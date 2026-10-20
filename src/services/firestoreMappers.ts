@@ -2,6 +2,8 @@ import type { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 
 import type { Address, Review } from '@/types/models';
 
+import { displayPhotoURL } from './photoUrl';
+
 export function toDate(value: unknown): Date | null {
   if (value instanceof Date) return value;
   if (value && typeof (value as { toDate?: unknown }).toDate === 'function') {
@@ -23,7 +25,7 @@ export function toAddress(snapshot: DocumentSnapshot<DocumentData>): Address {
     ownerName: data.ownerName ?? '',
     name: data.name ?? '',
     description: data.description ?? '',
-    photoURL: data.photoURL ?? null,
+    photoURL: displayPhotoURL(data.photoURL),
     isPublic: data.isPublic === true,
     latitude: data.latitude,
     longitude: data.longitude,
@@ -38,10 +40,10 @@ export function toReview(snapshot: DocumentSnapshot<DocumentData>, addressId: st
     addressId,
     authorId: data.authorId,
     authorName: data.authorName ?? '',
-    authorPhotoURL: data.authorPhotoURL ?? null,
+    authorPhotoURL: displayPhotoURL(data.authorPhotoURL),
     rating: data.rating,
     comment: data.comment ?? '',
-    photoURL: data.photoURL ?? null,
+    photoURL: displayPhotoURL(data.photoURL),
     createdAt: toDate(data.createdAt),
   };
 }

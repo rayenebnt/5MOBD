@@ -12,6 +12,7 @@ import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase';
 import type { AppUser } from '@/types/models';
 
+import { displayPhotoURL } from './photoUrl';
 import { storagePaths } from './storagePaths';
 import { deleteImage, uploadImage } from './storageService';
 
@@ -22,7 +23,7 @@ export function toAppUser(user: User): AppUser {
     uid: user.uid,
     email: user.email,
     displayName: user.displayName,
-    photoURL: user.photoURL || null,
+    photoURL: displayPhotoURL(user.photoURL || null),
   };
 }
 

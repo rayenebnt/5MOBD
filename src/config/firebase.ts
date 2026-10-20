@@ -11,7 +11,7 @@ import {
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 
-import { getEmulatorHost } from './emulatorHost';
+import { getEmulatorHost, STORAGE_EMULATOR_PORT } from './emulatorHost';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -38,12 +38,14 @@ export const auth = createAuth();
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-if (process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
-  const host = getEmulatorHost(
-    process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST,
-    Constants.expoConfig?.hostUri,
-  );
-  connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
-  connectFirestoreEmulator(db, host, 8080);
-  connectStorageEmulator(storage, host, 9199);
+/** Adresse des émulateurs Firebase, ou `null` avec un vrai projet Firebase. */
+export const emulatorHost: string | null =
+  process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === 'true'
+    ? getEmulatorHost(process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST, Constants.expoConfig?.hostUri)
+    : null;
+
+if (emulatorHost) {
+  connectAuthEmulator(auth, `http://${emulatorHost}:9099`, { disableWarnings: true });
+  connectFirestoreEmulator(db, emulatorHost, 8080);
+  connectStorageEmulator(storage, emulatorHost, STORAGE_EMULATOR_PORT);
 }
