@@ -100,7 +100,7 @@ L'iPhone se connecte directement au PC : à l'application (port 8081) et aux ém
    - Pour les photos, autoriser l'accès (complet ou à quelques photos).
    - Taper `r` dans le terminal 2 recharge l'application ; secouer l'iPhone ouvre le menu d'Expo Go.
 
-L'interface des émulateurs Firebase (comptes, données, photos, requêtes) est sur http://localhost:4000, dans le navigateur du PC.
+L'interface des émulateurs Firebase (comptes, données, photos, requêtes) est sur http://localhost:4040, dans le navigateur du PC.
 
 > Toujours démarrer `demo:firebase` **avant** `demo:phone`. Si tu l'as lancé après, tape `r` dans le terminal 2.
 
@@ -174,7 +174,7 @@ npm run test:firebase    # 41 tests : règles de sécurité + parcours complet s
 - [ ] VS Code ouvert sur le projet, avec ces onglets : `firestore.rules`, `storage.rules`, `src/screens/MapScreen.tsx`
 - [ ] Terminal 1 : `npm run demo:firebase` (« All emulators ready »)
 - [ ] Terminal 2 : `npm run demo:phone`, application ouverte sur l'iPhone, sur l'**écran de connexion** (si un compte est connecté : Profil > « Se déconnecter »)
-- [ ] Navigateur du PC ouvert sur http://localhost:4000
+- [ ] Navigateur du PC ouvert sur http://localhost:4040
 - [ ] Résultats des tests prêts (et vidéo e2e si tu l'as filmée)
 - [ ] iPhone en mode **Ne pas déranger**, luminosité au maximum
 - [ ] Pour montrer l'écran de l'iPhone au jury : adaptateur HDMI de l'iPhone vers le projecteur, ou application de recopie d'écran AirPlay sur le PC (à tester avant)
@@ -248,7 +248,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 ### 9. Projet Firebase sécurisé — 5 pts (1 à 2 min)
 
 1. VS Code : montrer `firestore.rules` (lecture des adresses privées réservée au propriétaire, création à son nom, validation des champs, avis seulement sur une adresse publique) et `storage.rules` (dossier personnel, images < 5 Mo).
-2. Navigateur du PC, http://localhost:4000 : **Authentication** (les comptes), **Firestore** (les données), onglet **Requests** de Firestore (chaque requête avec la règle qui l'a autorisée ou refusée), **Storage** (les photos).
+2. Navigateur du PC, http://localhost:4040 : **Authentication** (les comptes), **Firestore** (les données), onglet **Requests** de Firestore (chaque requête avec la règle qui l'a autorisée ou refusée), **Storage** (les photos).
 3. Montrer le résultat de `npm run test:firebase` : 33 tests des règles (ce qui est autorisé et ce qui est refusé) + le parcours complet.
 
 > À dire : la configuration Firebase n'est pas dans le code (variables d'environnement) ; pour la démo, les émulateurs officiels de Firebase appliquent exactement les mêmes règles qu'en ligne.
