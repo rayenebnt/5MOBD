@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { Alert, type AlertButton } from 'react-native';
 
 import * as addressService from '@/services/addressService';
@@ -59,6 +59,35 @@ describe("Détail d'une adresse", () => {
 
       expect(alert).toHaveBeenCalledWith('Supprimer cette adresse ?', expect.any(String), expect.any(Array));
       await waitFor(() => expect(mockedAddressService.deleteAddress).toHaveBeenCalledWith(address));
+      expect(mockRouter.back).toHaveBeenCalled();
+    });
+
+    it("n'affiche pas « introuvable » pendant la suppression", async () => {
+      const address = makeAddress();
+      setup(address);
+      let pushAddress: (value: Address | null) => void = () => undefined;
+      mockedAddressService.subscribeToAddress.mockImplementation((_id, onData) => {
+        pushAddress = onData;
+        onData(address);
+        return jest.fn();
+      });
+      let finishDelete: () => void = () => undefined;
+      mockedAddressService.deleteAddress.mockImplementationOnce(
+        () => new Promise<void>((resolve) => (finishDelete = resolve)),
+      );
+      jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+        (buttons as AlertButton[]).find((button) => button.style === 'destructive')?.onPress?.();
+      });
+      renderWithAuth(<AddressDetailScreen />);
+
+      fireEvent.press(screen.getByTestId('delete-address-button'));
+      // Firestore notifie la suppression avant la fin de deleteAddress()
+      act(() => pushAddress(null));
+
+      expect(screen.getByTestId('loading-view')).toBeOnTheScreen();
+      expect(screen.queryByTestId('address-not-found')).toBeNull();
+
+      await act(async () => finishDelete());
       expect(mockRouter.back).toHaveBeenCalled();
     });
 

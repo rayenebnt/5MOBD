@@ -30,6 +30,8 @@ export default function AddressDetailScreen() {
 
   if (loading) return <LoadingView />;
   if (!address) {
+    // Suppression en cours : Firestore signale l'adresse supprimée avant le retour en arrière
+    if (deleting) return <LoadingView />;
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ title: 'Adresse' }} />

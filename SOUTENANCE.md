@@ -32,15 +32,17 @@ Vérifier dans un nouveau terminal : `java -version` → version `21`.
 
 ### 1.3 Android Studio et le téléphone virtuel
 
-1. Installer [Android Studio](https://developer.android.com/studio) avec les options par défaut (l'assistant installe le SDK Android et l'émulateur).
-2. Ouvrir Android Studio > **More Actions** (ou menu **Tools**) > **Virtual Device Manager**.
-3. **Create Virtual Device** : choisir un **Pixel** qui a l'**icône Play Store** dans la colonne *Play Store*, puis une image système **API 35** avec **Google Play** (télécharger si besoin) > **Finish**.
+1. Activer l'hyperviseur Windows (nécessaire à l'émulateur) : menu Démarrer > « Activer ou désactiver des fonctionnalités Windows » > cocher **Plateforme de l'hyperviseur Windows** > OK, puis **redémarrer le PC**.
+2. Installer [Android Studio](https://developer.android.com/studio) avec les options par défaut (l'assistant installe le SDK Android et l'émulateur).
+3. Pour que le téléphone virtuel s'ouvre dans **sa propre fenêtre** (et pas à l'intérieur d'Android Studio) : **File > Settings > Tools > Emulator** > décocher **Launch in the Running Devices tool window** > OK.
+4. Ouvrir **Tools > Device Manager** (ou, sur l'écran d'accueil, **More Actions > Virtual Device Manager**).
+5. **Create Virtual Device** : choisir un **Pixel** qui a l'**icône Play Store** dans la colonne *Play Store*, puis une image système **API 35** avec **Google Play** (télécharger si besoin) > **Finish**.
 
    > Une image « Google Play » est indispensable : sans les services Google, la carte (Google Maps) reste grise.
 
-4. Démarrer le téléphone virtuel avec ▶ et attendre l'écran d'accueil.
+6. Démarrer le téléphone virtuel avec ▶ et attendre l'écran d'accueil.
 
-Si l'émulateur refuse de démarrer, la virtualisation doit être activée dans le BIOS (voir [Dépannage](#7-dépannage)).
+Si l'émulateur refuse de démarrer : vérifier la **Plateforme de l'hyperviseur Windows** (étape 1) et la virtualisation dans le BIOS (voir [Dépannage](#7-dépannage)).
 
 ### 1.4 VS Code et le projet
 
@@ -55,7 +57,7 @@ Si l'émulateur refuse de démarrer, la virtualisation doit être activée dans 
 4. Premier lancement des émulateurs Firebase (télécharge leurs fichiers, environ 100 Mo) :
 
    ```bash
-   npm run demo:firebase
+   npm run emulators
    ```
 
    Attendre « All emulators ready », puis arrêter avec **Ctrl+C**.
@@ -64,15 +66,18 @@ Si l'émulateur refuse de démarrer, la virtualisation doit être activée dans 
 
 ## 2. Lancer la démo
 
-1. **Démarrer le téléphone virtuel** depuis Android Studio (*Device Manager* > ▶). Tu peux ensuite réduire Android Studio.
-2. **Placer le téléphone à Paris** (sinon il est en Californie) : dans la barre de l'émulateur, bouton `⋯` (*Extended controls*) > **Location** > chercher « Paris » > **Set location**.
+1. **Démarrer le téléphone virtuel** depuis Android Studio (*Device Manager* > ▶). Il s'ouvre dans sa propre fenêtre (étape 1.3) : tu peux réduire Android Studio.
+2. **Choisir la position du téléphone** (sinon il est en Californie) : dans la barre de l'émulateur, bouton `⋯` (*Extended controls*) > **Location** > chercher **l'adresse de ton école** > **Set location**.
+
+   > Prends une adresse précise plutôt que « Paris » : si la localisation est refusée, l'application se place au centre de Paris par défaut. Avec l'adresse de l'école, le jury voit clairement que la carte se centre sur la position du téléphone.
+
 3. Dans VS Code, **terminal 1** :
 
    ```bash
    npm run demo:firebase
    ```
 
-   Attendre « All emulators ready ».
+   Attendre « All emulators ready ». Ce script repart toujours des données préparées (étape 3) et **n'enregistre rien** : tu peux répéter la démo autant de fois que tu veux. La toute première fois, tant que les données ne sont pas préparées, lancer `npm run demo:prepare` à la place (étape 3).
 
 4. **Terminal 2** (bouton ➕ du terminal, ou **Split Terminal** pour voir les deux côte à côte) :
 
@@ -92,7 +97,14 @@ L'interface des émulateurs Firebase (comptes, données, photos, requêtes) est 
 
 ## 3. Préparer les données (la veille)
 
-Les données (comptes, adresses, avis, photos) sont enregistrées dans le dossier `emulator-data/` du projet et rechargées à chaque `npm run demo:firebase`.
+Les données (comptes, adresses, avis, photos) sont enregistrées dans le dossier `emulator-data/` du projet. Deux scripts les utilisent :
+
+| Script | Rôle |
+| --- | --- |
+| `npm run demo:prepare` | **Préparation** : charge `emulator-data/` et **enregistre tout** à l'arrêt (Ctrl+C) |
+| `npm run demo:firebase` | **Répétitions et jour J** : charge `emulator-data/` et **n'enregistre rien** ; à chaque lancement, on repart des données préparées |
+
+Pour cette étape, lancer **`npm run demo:prepare`** dans le terminal 1 (à la place de `demo:firebase`), puis `npm run demo:android` dans le terminal 2.
 
 ### 3.1 Ajouter des photos dans la galerie de l'émulateur
 
@@ -107,19 +119,21 @@ Dans l'application, créer :
 | **Alice Martin** | `alice@demo.fr` / `demo1234` | photo de profil ; « Le Petit Bistrot » (**publique**, avec photo et description) ; « Chez mes parents » (**privée**) ; « Boulangerie du coin » (privée, servira à la suppression) |
 | **Bob Durand** | `bob@demo.fr` / `demo1234` | « Café des Arts » (**publique**, avec photo) ; un **avis** (4 étoiles + photo) sur « Le Petit Bistrot » d'Alice |
 
-Créer les adresses à des endroits différents de Paris (toucher la carte dans le formulaire) pour que la carte soit parlante.
+Créer les adresses à des endroits différents autour de la position choisie (toucher la carte dans le formulaire) pour que la carte soit parlante. Laisser l'application **déconnectée** à la fin (Profil > « Se déconnecter ») : la démo commence par l'écran de connexion.
 
 ### 3.3 Sauvegarder
 
-Pendant que `demo:firebase` tourne, dans un autre terminal :
+Pendant que `demo:prepare` tourne, dans un autre terminal :
 
 ```bash
 npm run demo:save
 ```
 
-Attendre « Export complete ». Puis arrêter `demo:firebase` avec **un seul Ctrl+C** et attendre la fin de l'arrêt (sous Windows, si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
+Attendre « Export complete ». Puis arrêter `demo:prepare` avec **un seul Ctrl+C** et attendre la fin de l'arrêt (sous Windows, si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
 
-**Vérifier** : relancer `npm run demo:firebase` et `npm run demo:android`, puis se connecter avec Alice : ses adresses doivent être là.
+**Vérifier** : lancer `npm run demo:firebase` et `npm run demo:android`, puis se connecter avec Alice : ses adresses doivent être là.
+
+> Pour modifier les données plus tard, relancer `npm run demo:prepare` (jamais pour une répétition : elle serait enregistrée).
 
 > Les données restent dans ton dossier `emulator-data/` (il n'est pas envoyé sur GitHub). Si tu présentes depuis un autre PC, copie ce dossier.
 
@@ -127,10 +141,10 @@ Attendre « Export complete ». Puis arrêter `demo:firebase` avec **un seul Ctr
 
 ## 4. Préparer les tests (la veille)
 
-Les commandes de tests démarrent leurs propres émulateurs : **arrêter `demo:firebase` avant** (sinon « port taken »). Garder les terminaux ouverts, ou faire des captures d'écran, pour les montrer pendant la soutenance.
+Les commandes de tests démarrent leurs propres émulateurs : **arrêter `demo:firebase` (ou `demo:prepare`) avant** (sinon « port taken »). Garder les terminaux ouverts, ou faire des captures d'écran, pour les montrer pendant la soutenance.
 
 ```bash
-npm test                 # 197 tests unitaires et fonctionnels
+npm test                 # 198 tests unitaires et fonctionnels
 npm run test:coverage    # idem avec la couverture (~97 %)
 npm run test:firebase    # 41 tests : règles de sécurité + parcours complet sur émulateurs Firebase
 ```
@@ -146,10 +160,10 @@ npm run test:firebase    # 41 tests : règles de sécurité + parcours complet s
 **30 minutes avant :**
 
 - [ ] PC branché sur secteur, connexion Internet (les fonds de carte en ont besoin)
-- [ ] Android Studio : téléphone virtuel démarré, position réglée sur Paris
+- [ ] Android Studio : téléphone virtuel démarré, position réglée sur l'adresse de l'école
 - [ ] VS Code ouvert sur le projet, avec ces onglets : `firestore.rules`, `storage.rules`, `src/screens/MapScreen.tsx`
 - [ ] Terminal 1 : `npm run demo:firebase` (« All emulators ready »)
-- [ ] Terminal 2 : `npm run demo:android` (application ouverte, déconnectée ou connectée avec Alice)
+- [ ] Terminal 2 : `npm run demo:android` (application ouverte sur l'**écran de connexion** ; si un compte est connecté : Profil > « Se déconnecter »)
 - [ ] Navigateur ouvert sur http://localhost:4000
 - [ ] Résultats des tests et vidéo e2e prêts
 - [ ] Mode « Ne pas déranger » de Windows activé
@@ -170,7 +184,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 ### 2. Carte centrée sur l'utilisateur — 15 pts (1 min)
 
-1. Onglet « Carte » : la carte se centre automatiquement sur la position du téléphone (Paris), avec le point bleu.
+1. Onglet « Carte » : la carte se centre automatiquement sur la position du téléphone (l'adresse de l'école), avec le point bleu.
 2. Montrer la légende (mes adresses publiques / privées / adresses des autres) et le bouton de recentrage.
 
 > À dire : `MapView` de `react-native-maps`, position obtenue avec `expo-location` après autorisation, puis `animateToRegion`. Si la localisation est refusée, un message s'affiche.
@@ -230,7 +244,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 ### 10. Tests — 25 pts (2 à 3 min)
 
-1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (197 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
+1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (198 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
 2. **Tests e2e (10 pts)** : la vidéo Maestro, et un parcours ouvert dans VS Code (`.maestro/flows/04_adresses_publiques_et_avis.yaml`).
 3. **Storybook (5 pts)** : arrêter le terminal 2 (Ctrl+C), lancer `npm run start:storybook` puis taper `a` : Storybook s'ouvre sur l'émulateur avec les 11 composants. Pour revenir à l'application : Ctrl+C puis `npm run demo:android`.
 
@@ -243,14 +257,15 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 | Problème | Solution |
 | --- | --- |
 | PowerShell : « l'exécution de scripts est désactivée sur ce système » | Dans VS Code, flèche à côté du ➕ du terminal > **Command Prompt**, ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
-| « port taken » au lancement de `demo:firebase` ou des tests | D'anciens émulateurs tournent encore : fermer tous les terminaux ; sinon terminer le processus « OpenJDK Platform binary » dans le Gestionnaire des tâches |
+| « port taken » au lancement de `demo:firebase`, `demo:prepare` ou des tests | D'anciens émulateurs tournent encore : fermer tous les terminaux ; sinon terminer le processus « OpenJDK Platform binary » dans le Gestionnaire des tâches |
 | `java` introuvable ou mauvaise version | Installer le JDK 21 (étape 1.2) puis **redémarrer VS Code** |
-| L'émulateur ne démarre pas ou est très lent | Activer la virtualisation (Intel VT-x / AMD-V, « SVM ») dans le BIOS ; fermer les applications gourmandes ; dans le *Device Manager* : ⋮ > **Cold Boot Now** |
+| L'émulateur ne démarre pas ou est très lent | Cocher **Plateforme de l'hyperviseur Windows** (étape 1.3) puis redémarrer ; activer la virtualisation (Intel VT-x / AMD-V, « SVM ») dans le BIOS ; fermer les applications gourmandes ; dans le *Device Manager* : ⋮ > **Cold Boot Now** |
 | La carte reste grise | Vérifier Internet ; l'image système doit être une image **Google Play** (recréer le téléphone virtuel, étape 1.3) |
-| La carte est centrée en Californie | *Extended controls* > **Location** > Paris > **Set location**, puis `r` dans le terminal 2 |
+| La carte est centrée en Californie, ou n'a pas suivi un changement de position | *Extended controls* > **Location** > choisir l'adresse > **Set location**, puis `r` dans le terminal 2 (la position est lue à l'ouverture de l'application) |
 | « Problème de connexion réseau » à l'inscription ou à la connexion | `demo:firebase` n'est pas lancé : le lancer, attendre « All emulators ready », puis `r` dans le terminal 2 |
 | « Project is incompatible with this version of Expo Go » | Désinstaller Expo Go de l'émulateur (appui long sur l'icône > désinstaller) puis relancer `npm run demo:android` : Expo réinstalle la version du SDK 53 |
 | Expo ne trouve pas l'émulateur | Le démarrer **avant** `npm run demo:android` depuis le *Device Manager* d'Android Studio |
 | Pas de photos dans la galerie | Refaire le glisser-déposer des images sur l'émulateur, ou utiliser « Photo » (appareil photo virtuel) |
-| Les données préparées ont disparu | Vérifier que le dossier `emulator-data/` existe ; toujours sauvegarder avec `npm run demo:save` avant d'arrêter |
+| `Directory "…emulator-data" does not exist` au lancement de `demo:firebase` | Les données n'ont pas encore été préparées : lancer `npm run demo:prepare` (étape 3) |
+| Les données préparées ont disparu ou ont changé | Vérifier que le dossier `emulator-data/` existe ; répéter uniquement avec `demo:firebase` (qui n'enregistre rien), jamais avec `demo:prepare` |
 | Comportement étrange après une modification du code | Ctrl+C puis `npm run demo:android` (le cache est vidé à chaque lancement) |

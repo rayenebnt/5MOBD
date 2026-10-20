@@ -32,7 +32,7 @@ Projet réalisé seul.
 | Mes adresses publiques et privées | Onglet « Mes adresses » (filtres Toutes / Publiques / Privées) et carte | `src/screens/MyAddressesScreen.tsx` |
 | Adresses publiques des autres | Onglet « Explorer » et carte | `src/screens/ExploreScreen.tsx` |
 | Avis et photos en commentaires | Note 1 à 5, commentaire et photo facultative sur les adresses publiques | `src/components/ReviewForm.tsx`, `src/services/reviewService.ts` |
-| Tests unitaires et fonctionnels | Jest + React Native Testing Library (197 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
+| Tests unitaires et fonctionnels | Jest + React Native Testing Library (198 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
 | Tests e2e | Maestro (4 parcours) | `.maestro/` |
 | Storybook | Storybook React Native 9 (11 composants, 31 stories) | `.rnstorybook/`, `src/components/*.stories.tsx` |
 
@@ -79,9 +79,10 @@ npm install
 En bref, après avoir démarré le téléphone virtuel depuis Android Studio :
 
 ```bash
-npm run demo:firebase    # terminal 1 : émulateurs Firebase (données conservées dans emulator-data/)
-npm run demo:android     # terminal 2 : l'application dans Expo Go sur l'émulateur Android
-npm run demo:save        # sauvegarder les données préparées (pendant que demo:firebase tourne)
+npm run demo:prepare     # préparation : émulateurs Firebase, données enregistrées dans emulator-data/ à l'arrêt
+npm run demo:save        # (pendant demo:prepare) sauvegarder les données préparées
+npm run demo:firebase    # répétitions / jour J : repart des données préparées, n'enregistre rien
+npm run demo:android     # l'application dans Expo Go sur l'émulateur Android
 ```
 
 Prérequis : Node.js 20.18.0, **JDK 21** (émulateurs Firebase), **Android Studio** avec un téléphone virtuel « Google Play ». Avec un vrai téléphone Android (Expo Go SDK 53, même Wi-Fi que le PC) : `npm run demo:phone` à la place de `demo:android`. Sur iPhone, Expo Go de l'App Store ne prend plus en charge le SDK 53.
@@ -141,7 +142,7 @@ tests/
 
 ### Tests sur émulateurs Firebase (`npm run test:firebase`)
 
-Lance ses propres émulateurs (ports 9099, 8080, 9199) : arrêter `npm run demo:firebase` / `npm run emulators` avant.
+Lance ses propres émulateurs (ports 9099, 8080, 9199) : arrêter `npm run demo:firebase` / `demo:prepare` / `npm run emulators` avant.
 
 - `tests/rules/` : 33 tests des règles Firestore et Storage (`@firebase/rules-unit-testing`).
 - `tests/integration/` : parcours complet exécuté avec les **services de l'application** et le vrai SDK Firebase (inscription, photo de profil, adresses privée / publique, visibilité, avis avec photo, suppression).
