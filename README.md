@@ -83,6 +83,8 @@ npm install
 
 ### Option recommandée : émulateur Android sur l'ordinateur
 
+Démarrer d'abord l'émulateur depuis Android Studio (*Device Manager* > ▶) et attendre l'écran d'accueil, puis :
+
 ```bash
 npm run demo:firebase    # terminal 1 : émulateurs Firebase (données sauvegardées)
 npm run demo:android     # terminal 2 : l'application dans Expo Go sur l'émulateur Android
@@ -104,7 +106,13 @@ npm run demo:android     # terminal 2 : l'application dans Expo Go sur l'émulat
 
 ### Préparer les données à l'avance
 
-`npm run demo:firebase` recharge au démarrage les données du dossier `emulator-data/` et les y enregistre à l'arrêt : arrêter avec **Ctrl+C** et attendre la fin de l'export avant de fermer le terminal. Interface des émulateurs (comptes, données, photos, requêtes autorisées / refusées) : http://localhost:4000.
+`npm run demo:firebase` recharge au démarrage les données du dossier `emulator-data/` et les y enregistre à l'arrêt.
+
+- **Sauvegarder sans risque** : pendant que `demo:firebase` tourne, lancer `npm run demo:save` dans un autre terminal et attendre « Export complete ».
+- **Arrêter** : un seul **Ctrl+C**, puis attendre la fin de l'arrêt avant de fermer la fenêtre (sous Windows, si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
+- Si « port taken » s'affiche au lancement suivant, d'anciens émulateurs tournent encore : fermer les terminaux, ou terminer le processus Java dans le Gestionnaire des tâches.
+
+Interface des émulateurs (comptes, données, photos, requêtes autorisées / refusées) : http://localhost:4000.
 
 Conseil : préparer deux comptes (par exemple Alice et Bob), quelques adresses publiques et privées avec photos, et un avis.
 
@@ -112,7 +120,7 @@ Conseil : préparer deux comptes (par exemple Alice et Bob), quelques adresses p
 
 | Étape | À montrer |
 | --- | --- |
-| Projet Firebase sécurisé | `firestore.rules`, `storage.rules`, puis `npm run test:firebase` (règles + parcours complet sur émulateurs) ; onglet *Requests* de Firestore dans l'interface des émulateurs |
+| Projet Firebase sécurisé | `firestore.rules`, `storage.rules`, onglet *Requests* de Firestore dans l'interface des émulateurs, résultat de `npm run test:firebase` (voir ci-dessous) |
 | Inscription, connexion, déconnexion | Créer un compte, se déconnecter (Profil), se reconnecter, message en cas de mauvais mot de passe |
 | Photo de profil | Profil > Galerie / Photo, puis Supprimer la photo |
 | Carte | Onglet Carte centré sur la position, légende des repères, bouton de recentrage |
@@ -120,7 +128,9 @@ Conseil : préparer deux comptes (par exemple Alice et Bob), quelques adresses p
 | Visualiser les adresses | « Mes adresses » (filtres Publiques / Privées) ; avec l'autre compte, « Explorer » montre seulement les adresses publiques |
 | Avis et photos | Sur l'adresse publique de l'autre compte : note, commentaire et photo |
 | Suppression | Détail de sa propre adresse > Supprimer l'adresse |
-| Tests | `npm test`, `npm run test:firebase`, `npm run e2e` (voir [Tests](#tests)), `npm run start:storybook` |
+| Tests | Résultats de `npm test`, `npm run test:firebase` et `npm run e2e`, puis Storybook (`npm run start:storybook`) |
+
+**Lancer les tests avant la démonstration** (ou après l'avoir arrêtée) et garder les résultats à l'écran : `npm run test:firebase` et les tests e2e démarrent leurs propres émulateurs sur les mêmes ports que `demo:firebase` (9099, 8080, 9199) et échouent (« port taken ») s'il tourne. Les tests e2e déconnectent aussi Expo Go et déplacent la position de l'émulateur : se reconnecter au compte de démonstration ensuite.
 
 ## Architecture
 
@@ -176,6 +186,8 @@ tests/
 - **Stories** : chaque story Storybook est rendue dans Jest (`src/components/__tests__/stories.test.tsx`).
 
 ### Tests sur émulateurs Firebase (`npm run test:firebase`)
+
+Lance ses propres émulateurs (ports 9099, 8080, 9199) : arrêter `npm run demo:firebase` / `npm run emulators` avant.
 
 - `tests/rules/` : 33 tests des règles Firestore et Storage (`@firebase/rules-unit-testing`).
 - `tests/integration/` : parcours complet exécuté avec les **services de l'application** et le vrai SDK Firebase (inscription, photo de profil, adresses privée / publique, visibilité, avis avec photo, suppression).

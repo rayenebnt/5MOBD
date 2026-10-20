@@ -49,6 +49,7 @@ database-debug.log*
 
 # Données des émulateurs sauvegardées pour la démonstration (npm run demo:firebase)
 emulator-data/
+firebase-export-*/
 
 # Builds natifs générés (npx expo prebuild / run)
 /android

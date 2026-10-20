@@ -11,6 +11,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "demo:firebase": "firebase emulators:start --project demo-mesbonnesadresses --import=./emulator-data --export-on-exit",
+    "demo:save": "firebase emulators:export ./emulator-data --project demo-mesbonnesadresses --force",
     "demo:android": "node --env-file=.env.e2e node_modules/expo/bin/cli start --android --clear",
     "demo:phone": "node --env-file=.env.demo node_modules/expo/bin/cli start --clear",
     "typecheck": "tsc --noEmit",
