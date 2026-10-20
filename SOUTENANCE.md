@@ -18,6 +18,8 @@ Sommaire :
 
 Une connexion Internet est nécessaire pour cette étape (plusieurs Go à télécharger).
 
+> **Tout se fait côté Windows, pas dans WSL** : l'émulateur Android tourne sous Windows, et depuis WSL (Ubuntu, zsh…) Expo ne peut pas le piloter. Installer les outils avec leurs installateurs Windows, cloner le projet dans un dossier Windows (par ex. `C:\Users\<toi>\5MOBD`) et utiliser le terminal **Command Prompt** de VS Code. Si VS Code affiche « WSL: … » en bas à gauche : cliquer dessus > **Fermer la connexion à distance**.
+
 ### 1.1 Node.js 20.18.0
 
 Installer [Node.js 20.18.0 pour Windows](https://nodejs.org/dist/v20.18.0/node-v20.18.0-x64.msi) (ou avec [nvm-windows](https://github.com/coreybutler/nvm-windows) : `nvm install 20.18.0` puis `nvm use 20.18.0`).
@@ -256,6 +258,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 | Problème | Solution |
 | --- | --- |
+| `zsh: command not found: java` (ou `node`), terminal Ubuntu / WSL | Le terminal est dans WSL : revenir côté Windows (voir l'encadré au début de la section 1), terminal **Command Prompt**, projet cloné dans un dossier Windows |
 | PowerShell : « l'exécution de scripts est désactivée sur ce système » | Dans VS Code, flèche à côté du ➕ du terminal > **Command Prompt**, ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
 | « port taken » au lancement de `demo:firebase`, `demo:prepare` ou des tests | D'anciens émulateurs tournent encore : fermer tous les terminaux ; sinon terminer le processus « OpenJDK Platform binary » dans le Gestionnaire des tâches |
 | `java` introuvable ou mauvaise version | Installer le JDK 21 (étape 1.2) puis **redémarrer VS Code** |
