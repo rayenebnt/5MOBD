@@ -1,103 +1,107 @@
-# Guide de soutenance : démo sur l'émulateur Android
+# Guide de soutenance : démo sur iPhone avec Expo Go
 
-La démo se fait **sur ton PC** : l'application tourne dans un **émulateur Android** (un téléphone virtuel, pas besoin d'avoir un téléphone Android), et Firebase est remplacé par les **émulateurs Firebase** locaux. Pas de projet Firebase, rien à payer. **VS Code** reste ton éditeur : c'est dans son terminal que tu lances toutes les commandes.
+La démo se fait **sur ton iPhone**, dans l'application **Expo Go** (App Store), et Firebase est remplacé par les **émulateurs Firebase** qui tournent sur ton PC. Pas de projet Firebase, rien à payer, pas d'Android Studio. **VS Code** reste ton éditeur : c'est dans son terminal que tu lances toutes les commandes.
 
 Sommaire :
 
 1. [Installation (une seule fois)](#1-installation-une-seule-fois)
-2. [Lancer la démo](#2-lancer-la-démo)
-3. [Préparer les données (la veille)](#3-préparer-les-données-la-veille)
-4. [Préparer les tests (la veille)](#4-préparer-les-tests-la-veille)
-5. [Le jour J : check-list](#5-le-jour-j--check-list)
-6. [Déroulé de la démo (barème)](#6-déroulé-de-la-démo-barème)
-7. [Dépannage](#7-dépannage)
+2. [Le réseau : PC et iPhone doivent se voir](#2-le-réseau--pc-et-iphone-doivent-se-voir)
+3. [Lancer la démo](#3-lancer-la-démo)
+4. [Préparer les données (la veille)](#4-préparer-les-données-la-veille)
+5. [Préparer les tests (la veille)](#5-préparer-les-tests-la-veille)
+6. [Le jour J : check-list](#6-le-jour-j--check-list)
+7. [Déroulé de la démo (barème)](#7-déroulé-de-la-démo-barème)
+8. [Dépannage](#8-dépannage)
 
 ---
 
 ## 1. Installation (une seule fois)
 
-Une connexion Internet est nécessaire pour cette étape (plusieurs Go à télécharger).
+> **Tout se fait côté Windows, pas dans WSL** : depuis WSL, l'iPhone ne peut pas joindre l'application ni les émulateurs Firebase. Installer les outils avec leurs installateurs Windows, cloner le projet dans un dossier Windows et utiliser le terminal **Command Prompt** de VS Code. Si VS Code affiche « WSL: … » en bas à gauche : cliquer dessus > **Fermer la connexion à distance**.
 
-> **Tout se fait côté Windows, pas dans WSL** : l'émulateur Android tourne sous Windows, et depuis WSL (Ubuntu, zsh…) Expo ne peut pas le piloter. Installer les outils avec leurs installateurs Windows, cloner le projet dans un dossier Windows (par ex. `C:\Users\<toi>\5MOBD`) et utiliser le terminal **Command Prompt** de VS Code. Si VS Code affiche « WSL: … » en bas à gauche : cliquer dessus > **Fermer la connexion à distance**.
+### 1.1 Sur le PC
 
-### 1.1 Node.js 20.18.0
+1. **Git** : https://git-scm.com/download/win (options par défaut).
+2. **Node.js 20.20.2** : https://nodejs.org/dist/v20.20.2/node-v20.20.2-x64.msi
+3. **Java 21** (pour les émulateurs Firebase) : [Eclipse Temurin JDK 21](https://adoptium.net/temurin/releases/?version=21), fichier `.msi`, cocher **« Set JAVA_HOME variable »** pendant l'installation.
+4. Dans VS Code : **Terminal > New Terminal**. Si le terminal s'ouvre en zsh/Ubuntu ou en PowerShell : flèche à côté du **+** > **Command Prompt**. Pour en faire le terminal par défaut : **Ctrl+Shift+P** > « Terminal: Select Default Profile » > **Command Prompt**.
 
-Installer [Node.js 20.18.0 pour Windows](https://nodejs.org/dist/v20.18.0/node-v20.18.0-x64.msi) (ou avec [nvm-windows](https://github.com/coreybutler/nvm-windows) : `nvm install 20.18.0` puis `nvm use 20.18.0`).
+Vérifier dans un **nouveau** terminal Command Prompt :
 
-Vérifier dans un **nouveau** terminal : `node -v` → `v20.18.0`.
+```bash
+node -v          # v20.20.2
+java -version    # version 21
+git --version
+```
 
-### 1.2 Java 21 (pour les émulateurs Firebase)
+### 1.2 Récupérer le projet
 
-Installer [Eclipse Temurin JDK 21](https://adoptium.net/temurin/releases/?version=21) (fichier `.msi`) en cochant **« Set JAVA_HOME variable »** pendant l'installation.
+```bash
+cd %USERPROFILE%
+git clone https://github.com/rayenebnt/5MOBD.git
+code 5MOBD
+```
 
-Vérifier dans un nouveau terminal : `java -version` → version `21`.
+Dans la nouvelle fenêtre VS Code (terminal Command Prompt) :
 
-### 1.3 Android Studio et le téléphone virtuel
+```bash
+npm install
+npm run emulators
+```
 
-1. Activer l'hyperviseur Windows (nécessaire à l'émulateur) : menu Démarrer > « Activer ou désactiver des fonctionnalités Windows » > cocher **Plateforme de l'hyperviseur Windows** > OK, puis **redémarrer le PC**.
-2. Installer [Android Studio](https://developer.android.com/studio) avec les options par défaut (l'assistant installe le SDK Android et l'émulateur).
-3. Pour que le téléphone virtuel s'ouvre dans **sa propre fenêtre** (et pas à l'intérieur d'Android Studio) : **File > Settings > Tools > Emulator** > décocher **Launch in the Running Devices tool window** > OK.
-4. Ouvrir **Tools > Device Manager** (ou, sur l'écran d'accueil, **More Actions > Virtual Device Manager**).
-5. **Create Virtual Device** : choisir un **Pixel** qui a l'**icône Play Store** dans la colonne *Play Store*, puis une image système **API 35** avec **Google Play** (télécharger si besoin) > **Finish**.
+`npm run emulators` télécharge les émulateurs Firebase (environ 100 Mo) la première fois : attendre « All emulators ready », puis arrêter avec **Ctrl+C**.
 
-   > Une image « Google Play » est indispensable : sans les services Google, la carte (Google Maps) reste grise.
+### 1.3 Sur l'iPhone
 
-6. Démarrer le téléphone virtuel avec ▶ et attendre l'écran d'accueil.
-
-Si l'émulateur refuse de démarrer : vérifier la **Plateforme de l'hyperviseur Windows** (étape 1) et la virtualisation dans le BIOS (voir [Dépannage](#7-dépannage)).
-
-### 1.4 VS Code et le projet
-
-1. Ouvrir le dossier du projet dans VS Code (**File > Open Folder**).
-2. Ouvrir un terminal : **Terminal > New Terminal**.
-3. Installer les dépendances :
-
-   ```bash
-   npm install
-   ```
-
-4. Premier lancement des émulateurs Firebase (télécharge leurs fichiers, environ 100 Mo) :
-
-   ```bash
-   npm run emulators
-   ```
-
-   Attendre « All emulators ready », puis arrêter avec **Ctrl+C**.
+Installer (ou mettre à jour) **Expo Go** depuis l'App Store. Si Expo Go demande de se connecter, un compte Expo gratuit suffit.
 
 ---
 
-## 2. Lancer la démo
+## 2. Le réseau : PC et iPhone doivent se voir
 
-1. **Démarrer le téléphone virtuel** depuis Android Studio (*Device Manager* > ▶). Il s'ouvre dans sa propre fenêtre (étape 1.3) : tu peux réduire Android Studio.
-2. **Choisir la position du téléphone** (sinon il est en Californie) : dans la barre de l'émulateur, bouton `⋯` (*Extended controls*) > **Location** > chercher **l'adresse de ton école** > **Set location**.
+L'iPhone se connecte directement au PC : à l'application (port 8081) et aux émulateurs Firebase (ports 9099, 8080, 9199). Il faut donc que les deux soient sur le **même réseau**.
 
-   > Prends une adresse précise plutôt que « Paris » : si la localisation est refusée, l'application se place au centre de Paris par défaut. Avec l'adresse de l'école, le jury voit clairement que la carte se centre sur la position du téléphone.
+- **À la maison** : PC et iPhone sur le même Wi-Fi.
+- **À l'école (recommandé)** : les Wi-Fi d'école bloquent souvent les échanges entre appareils. Utiliser le **partage de connexion de l'iPhone** : iPhone > Réglages > **Partage de connexion** > activer **« Autoriser d'autres utilisateurs »**, puis connecter le PC à ce Wi-Fi. La carte (Apple Plans) utilise alors les données mobiles.
 
-3. Dans VS Code, **terminal 1** :
+**Pare-feu Windows** : au premier lancement, Windows demande d'autoriser **Node.js** et **Java** : cocher **Réseaux privés ET Réseaux publics**, puis **Autoriser**. (Windows classe souvent un partage de connexion en réseau « public ».)
+
+> Pas besoin de tunnel (ngrok, localhost.run…) : un tunnel ne ferait passer que l'application, pas les émulateurs Firebase.
+
+---
+
+## 3. Lancer la démo
+
+1. Connecter le PC et l'iPhone au même réseau (section 2).
+2. Dans VS Code, **terminal 1** :
 
    ```bash
    npm run demo:firebase
    ```
 
-   Attendre « All emulators ready ». Ce script repart toujours des données préparées (étape 3) et **n'enregistre rien** : tu peux répéter la démo autant de fois que tu veux. La toute première fois, tant que les données ne sont pas préparées, lancer `npm run demo:prepare` à la place (étape 3).
+   Attendre « All emulators ready ». Ce script repart toujours des données préparées (section 4) et **n'enregistre rien** : tu peux répéter la démo autant de fois que tu veux. La toute première fois, tant que les données ne sont pas préparées, lancer `npm run demo:prepare` à la place.
 
-4. **Terminal 2** (bouton ➕ du terminal, ou **Split Terminal** pour voir les deux côte à côte) :
+3. **Terminal 2** (bouton ➕ du terminal, ou **Split Terminal**) :
 
    ```bash
-   npm run demo:android
+   npm run demo:phone
    ```
 
-   - Au tout premier lancement, Expo propose d'installer **Expo Go** sur l'émulateur : accepter (Internet nécessaire).
-   - L'application s'ouvre dans Expo Go. Si un message d'accueil d'Expo Go s'affiche, appuyer sur **Continue**.
-   - Taper `r` dans ce terminal recharge l'application ; Ctrl+C l'arrête.
+   Un **QR code** s'affiche dans le terminal.
 
-L'interface des émulateurs Firebase (comptes, données, photos, requêtes) est sur http://localhost:4000.
+4. Sur l'iPhone, ouvrir l'**appareil photo**, viser le QR code, puis toucher **« Ouvrir dans Expo Go »**.
+   - Expo Go demande à accéder au **réseau local** : **Autoriser** (indispensable).
+   - L'application demande la **localisation** : **Autoriser lorsque l'app est active**.
+   - Pour les photos, autoriser l'accès (complet ou à quelques photos).
+   - Taper `r` dans le terminal 2 recharge l'application ; secouer l'iPhone ouvre le menu d'Expo Go.
 
-> Toujours démarrer `demo:firebase` **avant** l'application. Si tu l'as lancé après, tape `r` dans le terminal 2.
+L'interface des émulateurs Firebase (comptes, données, photos, requêtes) est sur http://localhost:4000, dans le navigateur du PC.
+
+> Toujours démarrer `demo:firebase` **avant** `demo:phone`. Si tu l'as lancé après, tape `r` dans le terminal 2.
 
 ---
 
-## 3. Préparer les données (la veille)
+## 4. Préparer les données (la veille)
 
 Les données (comptes, adresses, avis, photos) sont enregistrées dans le dossier `emulator-data/` du projet. Deux scripts les utilisent :
 
@@ -106,24 +110,22 @@ Les données (comptes, adresses, avis, photos) sont enregistrées dans le dossie
 | `npm run demo:prepare` | **Préparation** : charge `emulator-data/` et **enregistre tout** à l'arrêt (Ctrl+C) |
 | `npm run demo:firebase` | **Répétitions et jour J** : charge `emulator-data/` et **n'enregistre rien** ; à chaque lancement, on repart des données préparées |
 
-Pour cette étape, lancer **`npm run demo:prepare`** dans le terminal 1 (à la place de `demo:firebase`), puis `npm run demo:android` dans le terminal 2.
+Pour cette étape : **`npm run demo:prepare`** dans le terminal 1, puis `npm run demo:phone` dans le terminal 2, et ouvrir l'application sur l'iPhone.
 
-### 3.1 Ajouter des photos dans la galerie de l'émulateur
+### 4.1 Créer les données de démonstration
 
-Glisser-déposer quelques images (restaurants, cafés, un portrait…) depuis l'explorateur Windows **sur la fenêtre de l'émulateur** : elles arrivent dans la galerie du téléphone virtuel. L'appareil photo de l'émulateur fonctionne aussi (scène virtuelle).
-
-### 3.2 Créer les données de démonstration
-
-Dans l'application, créer :
+Avec les photos de ton iPhone (galerie ou appareil photo), créer :
 
 | Compte | E-mail / mot de passe | Contenu à créer |
 | --- | --- | --- |
 | **Alice Martin** | `alice@demo.fr` / `demo1234` | photo de profil ; « Le Petit Bistrot » (**publique**, avec photo et description) ; « Chez mes parents » (**privée**) ; « Boulangerie du coin » (privée, servira à la suppression) |
 | **Bob Durand** | `bob@demo.fr` / `demo1234` | « Café des Arts » (**publique**, avec photo) ; un **avis** (4 étoiles + photo) sur « Le Petit Bistrot » d'Alice |
 
-Créer les adresses à des endroits différents autour de la position choisie (toucher la carte dans le formulaire) pour que la carte soit parlante. Laisser l'application **déconnectée** à la fin (Profil > « Se déconnecter ») : la démo commence par l'écran de connexion.
+Placer les adresses à des endroits différents (toucher la carte dans le formulaire) pour que la carte soit parlante. Laisser l'application **déconnectée** à la fin (Profil > « Se déconnecter ») : la démo commence par l'écran de connexion.
 
-### 3.3 Sauvegarder
+> Les photos restent visibles même si l'adresse du PC change le jour J (autre réseau, partage de connexion) : l'application les recherche toujours à l'adresse actuelle.
+
+### 4.2 Sauvegarder
 
 Pendant que `demo:prepare` tourne, dans un autre terminal :
 
@@ -131,48 +133,50 @@ Pendant que `demo:prepare` tourne, dans un autre terminal :
 npm run demo:save
 ```
 
-Attendre « Export complete ». Puis arrêter `demo:prepare` avec **un seul Ctrl+C** et attendre la fin de l'arrêt (sous Windows, si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
+Attendre « Export complete ». Puis arrêter `demo:prepare` avec **un seul Ctrl+C** et attendre la fin de l'arrêt (si « Terminer le programme de commandes (O/N) ? » s'affiche, ne pas refaire Ctrl+C).
 
-**Vérifier** : lancer `npm run demo:firebase` et `npm run demo:android`, puis se connecter avec Alice : ses adresses doivent être là.
+**Vérifier** : lancer `npm run demo:firebase` et `npm run demo:phone`, puis se connecter avec Alice : ses adresses doivent être là.
 
-> Pour modifier les données plus tard, relancer `npm run demo:prepare` (jamais pour une répétition : elle serait enregistrée).
-
-> Les données restent dans ton dossier `emulator-data/` (il n'est pas envoyé sur GitHub). Si tu présentes depuis un autre PC, copie ce dossier.
+> Pour modifier les données plus tard, relancer `npm run demo:prepare` (jamais pour une répétition : elle serait enregistrée). Les données restent dans ton dossier `emulator-data/` (il n'est pas envoyé sur GitHub).
 
 ---
 
-## 4. Préparer les tests (la veille)
+## 5. Préparer les tests (la veille)
 
 Les commandes de tests démarrent leurs propres émulateurs : **arrêter `demo:firebase` (ou `demo:prepare`) avant** (sinon « port taken »). Garder les terminaux ouverts, ou faire des captures d'écran, pour les montrer pendant la soutenance.
 
 ```bash
-npm test                 # 198 tests unitaires et fonctionnels
+npm test                 # 202 tests unitaires et fonctionnels
 npm run test:coverage    # idem avec la couverture (~97 %)
 npm run test:firebase    # 41 tests : règles de sécurité + parcours complet sur émulateurs Firebase
 ```
 
-**Tests e2e (Maestro)** : installer le [CLI Maestro](https://docs.maestro.dev/getting-started/installing-maestro) puis suivre la section *Tests e2e* du [README](README.md#tests-e2e-avec-maestro-npm-run-e2e) (`npm run emulators`, `npm run start:e2e`, `npm run e2e`). Ils créent leurs propres comptes et déconnectent Expo Go : **les lancer la veille et filmer l'écran** (Win+Alt+R avec la Xbox Game Bar) pour montrer la vidéo pendant la soutenance.
+**Tests e2e (Maestro)** : Maestro pilote un **émulateur Android** ou un simulateur iOS (sur Mac), pas un vrai iPhone. Deux possibilités :
 
-**Plan B** : filmer aussi une démo complète de l'application, au cas où quelque chose ne marcherait pas le jour J.
+- **Les exécuter une fois et filmer l'écran** (recommandé, 10 pts) : installer [Android Studio](https://developer.android.com/studio) et un téléphone virtuel « Google Play » (API 35), le [CLI Maestro](https://docs.maestro.dev/getting-started/installing-maestro), puis suivre la section *Tests e2e* du [README](README.md#tests-e2e-avec-maestro-npm-run-e2e) (`npm run emulators`, `npm run start:e2e`, `npm run e2e`). Filmer avec la Xbox Game Bar (Win+Alt+R) et montrer la vidéo pendant la soutenance.
+- **Sinon**, montrer et expliquer les parcours dans VS Code (`.maestro/flows/`).
+
+**Plan B** : filmer une démo complète sur l'iPhone (Centre de contrôle > **Enregistrement de l'écran**), au cas où le réseau ne marcherait pas le jour J.
 
 ---
 
-## 5. Le jour J : check-list
+## 6. Le jour J : check-list
 
 **30 minutes avant :**
 
-- [ ] PC branché sur secteur, connexion Internet (les fonds de carte en ont besoin)
-- [ ] Android Studio : téléphone virtuel démarré, position réglée sur l'adresse de l'école
+- [ ] PC branché sur secteur, iPhone chargé
+- [ ] **Partage de connexion** de l'iPhone activé, PC connecté dessus
 - [ ] VS Code ouvert sur le projet, avec ces onglets : `firestore.rules`, `storage.rules`, `src/screens/MapScreen.tsx`
 - [ ] Terminal 1 : `npm run demo:firebase` (« All emulators ready »)
-- [ ] Terminal 2 : `npm run demo:android` (application ouverte sur l'**écran de connexion** ; si un compte est connecté : Profil > « Se déconnecter »)
-- [ ] Navigateur ouvert sur http://localhost:4000
+- [ ] Terminal 2 : `npm run demo:phone`, application ouverte sur l'iPhone, sur l'**écran de connexion** (si un compte est connecté : Profil > « Se déconnecter »)
+- [ ] Navigateur du PC ouvert sur http://localhost:4000
 - [ ] Résultats des tests et vidéo e2e prêts
-- [ ] Mode « Ne pas déranger » de Windows activé
+- [ ] iPhone en mode **Ne pas déranger**, luminosité au maximum
+- [ ] Pour montrer l'écran de l'iPhone au jury : adaptateur HDMI de l'iPhone vers le projecteur, ou application de recopie d'écran AirPlay sur le PC (à tester avant)
 
 ---
 
-## 6. Déroulé de la démo (barème)
+## 7. Déroulé de la démo (barème)
 
 Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'application.
 
@@ -186,14 +190,14 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 ### 2. Carte centrée sur l'utilisateur — 15 pts (1 min)
 
-1. Onglet « Carte » : la carte se centre automatiquement sur la position du téléphone (l'adresse de l'école), avec le point bleu.
+1. Onglet « Carte » : la carte se centre automatiquement sur ta **vraie position** (la salle de soutenance), avec le point bleu.
 2. Montrer la légende (mes adresses publiques / privées / adresses des autres) et le bouton de recentrage.
 
-> À dire : `MapView` de `react-native-maps`, position obtenue avec `expo-location` après autorisation, puis `animateToRegion`. Si la localisation est refusée, un message s'affiche.
+> À dire : `MapView` de `react-native-maps` (Apple Plans sur iPhone), position obtenue avec `expo-location` après autorisation, puis `animateToRegion`. Si la localisation est refusée, un message s'affiche.
 
 ### 3. Photo de profil — 5 pts (1 min)
 
-1. Onglet « Profil » > « Galerie » > choisir une photo : elle s'affiche.
+1. Onglet « Profil » > « Photo » : prendre un selfie (ou « Galerie »).
 2. « Supprimer la photo » : retour aux initiales.
 
 > À dire : image envoyée dans Cloud Storage (`users/{uid}/avatar.jpg`) ; les règles n'autorisent que des images de moins de 5 Mo, dans son propre dossier.
@@ -208,14 +212,14 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 1. Onglet « Mes adresses » : les adresses d'Alice avec leur badge « Publique » / « Privée ».
 2. Filtres « Publiques », « Privées », « Toutes ».
-3. Onglet « Carte » : les repères vert (publiques) et violet (privées).
+3. Onglet « Carte » : les repères de couleurs différentes (publiques / privées).
 
 ### 6. Création d'une adresse — 25 pts (2 min)
 
 1. Carte > bouton « + ».
-2. « Nom » (par ex. « Le Comptoir »), « Description », « Photo » > « Galerie ».
+2. « Nom » (par ex. « Le Comptoir »), « Description », « Photo » : prendre une photo de la salle (ou « Galerie »).
 3. Interrupteur « Adresse privée » → « Adresse publique » (montrer que l'adresse est privée par défaut).
-4. « Emplacement » : le repère est sur la position actuelle ; toucher la carte pour le déplacer.
+4. « Emplacement » : le repère est sur ta position actuelle ; toucher la carte pour le déplacer.
 5. « Enregistrer l'adresse » : l'adresse apparaît sur la carte et dans « Mes adresses ».
 
 > À dire : document `addresses/{id}` (propriétaire, nom, description, `isPublic`, coordonnées, URL de la photo) ; les règles valident chaque champ.
@@ -224,10 +228,10 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 1. « Se déconnecter », se connecter avec `bob@demo.fr`.
 2. Onglet « Explorer » : Bob voit « Le Petit Bistrot » et « Le Comptoir » d'Alice, **mais pas** « Chez mes parents » (privée).
-3. Ouvrir « Le Comptoir » > « Laisser un avis » : 4 étoiles, un commentaire, « Galerie » pour joindre une photo > « Publier l'avis » : l'avis apparaît avec la moyenne.
+3. Ouvrir « Le Comptoir », faire défiler jusqu'à « Laisser un avis » : 4 étoiles, un commentaire, « Photo » ou « Galerie » > « Publier l'avis » : l'avis apparaît avec la moyenne.
 4. Ouvrir « Le Petit Bistrot » : l'avis préparé la veille, avec sa photo.
 
-> À dire : avis dans la sous-collection `addresses/{id}/reviews` ; les règles interdisent les avis sur une adresse privée et l'usurpation d'auteur. Bob ne voit pas le bouton de suppression : il n'est pas propriétaire.
+> À dire : avis dans la sous-collection `addresses/{id}/reviews` ; les règles interdisent les avis sur une adresse privée et la publication au nom d'un autre. Bob ne voit pas le bouton de suppression : il n'est pas propriétaire.
 
 ### 8. Suppression d'une adresse — 5 pts (30 s)
 
@@ -239,36 +243,35 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 ### 9. Projet Firebase sécurisé — 5 pts (1 à 2 min)
 
 1. VS Code : montrer `firestore.rules` (lecture des adresses privées réservée au propriétaire, création à son nom, validation des champs, avis seulement sur une adresse publique) et `storage.rules` (dossier personnel, images < 5 Mo).
-2. Navigateur, http://localhost:4000 : **Authentication** (les comptes), **Firestore** (les données), onglet **Requests** de Firestore (chaque requête avec la règle qui l'a autorisée ou refusée), **Storage** (les photos).
+2. Navigateur du PC, http://localhost:4000 : **Authentication** (les comptes), **Firestore** (les données), onglet **Requests** de Firestore (chaque requête avec la règle qui l'a autorisée ou refusée), **Storage** (les photos).
 3. Montrer le résultat de `npm run test:firebase` : 33 tests des règles (ce qui est autorisé et ce qui est refusé) + le parcours complet.
 
 > À dire : la configuration Firebase n'est pas dans le code (variables d'environnement) ; pour la démo, les émulateurs officiels de Firebase appliquent exactement les mêmes règles qu'en ligne.
 
 ### 10. Tests — 25 pts (2 à 3 min)
 
-1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (198 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
+1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (202 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
 2. **Tests e2e (10 pts)** : la vidéo Maestro, et un parcours ouvert dans VS Code (`.maestro/flows/04_adresses_publiques_et_avis.yaml`).
-3. **Storybook (5 pts)** : arrêter le terminal 2 (Ctrl+C), lancer `npm run start:storybook` puis taper `a` : Storybook s'ouvre sur l'émulateur avec les 11 composants. Pour revenir à l'application : Ctrl+C puis `npm run demo:android`.
+3. **Storybook (5 pts)** : arrêter le terminal 2 (Ctrl+C), lancer `npm run start:storybook` et scanner le nouveau QR code avec l'iPhone : Storybook s'ouvre avec les 11 composants. Pour revenir à l'application : Ctrl+C, `npm run demo:phone` et scanner à nouveau le QR code.
 
 > Garder Storybook pour la fin : le retour à l'application prend environ une minute.
 
 ---
 
-## 7. Dépannage
+## 8. Dépannage
 
 | Problème | Solution |
 | --- | --- |
-| `zsh: command not found: java` (ou `node`), terminal Ubuntu / WSL | Le terminal est dans WSL : revenir côté Windows (voir l'encadré au début de la section 1), terminal **Command Prompt**, projet cloné dans un dossier Windows |
-| PowerShell : « l'exécution de scripts est désactivée sur ce système » | Dans VS Code, flèche à côté du ➕ du terminal > **Command Prompt**, ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
+| `zsh: command not found: java` (ou `node`), terminal Ubuntu / WSL | Le terminal est dans WSL : revenir côté Windows (encadré de la section 1), terminal **Command Prompt**, projet cloné dans un dossier Windows |
+| PowerShell : « l'exécution de scripts est désactivée sur ce système » | Utiliser le terminal **Command Prompt** (section 1.1), ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
+| « Project is incompatible with this version of Expo Go » | Mettre à jour Expo Go depuis l'App Store (le projet utilise le SDK 54) |
+| Expo Go tourne longtemps puis « Could not connect to the server » | PC et iPhone ne sont pas sur le même réseau, ou l'accès au **réseau local** a été refusé : iPhone > Réglages > **Expo Go** > activer **Réseau local** ; vérifier le pare-feu (section 2) ; essayer le partage de connexion de l'iPhone |
+| Le QR code pointe vers une mauvaise adresse (par ex. `172.x` de WSL ou d'une machine virtuelle) | Dans le terminal Command Prompt : `ipconfig`, noter l'**adresse IPv4** de la carte Wi-Fi, puis `set REACT_NATIVE_PACKAGER_HOSTNAME=<cette adresse>` et relancer `npm run demo:phone` dans le **même** terminal |
+| « Problème de connexion réseau » à l'inscription ou à la connexion | `demo:firebase` n'est pas lancé, ou Java est bloqué par le pare-feu : lancer `demo:firebase`, attendre « All emulators ready », autoriser Java (privé et public), puis `r` dans le terminal 2 |
 | « port taken » au lancement de `demo:firebase`, `demo:prepare` ou des tests | D'anciens émulateurs tournent encore : fermer tous les terminaux ; sinon terminer le processus « OpenJDK Platform binary » dans le Gestionnaire des tâches |
-| `java` introuvable ou mauvaise version | Installer le JDK 21 (étape 1.2) puis **redémarrer VS Code** |
-| L'émulateur ne démarre pas ou est très lent | Cocher **Plateforme de l'hyperviseur Windows** (étape 1.3) puis redémarrer ; activer la virtualisation (Intel VT-x / AMD-V, « SVM ») dans le BIOS ; fermer les applications gourmandes ; dans le *Device Manager* : ⋮ > **Cold Boot Now** |
-| La carte reste grise | Vérifier Internet ; l'image système doit être une image **Google Play** (recréer le téléphone virtuel, étape 1.3) |
-| La carte est centrée en Californie, ou n'a pas suivi un changement de position | *Extended controls* > **Location** > choisir l'adresse > **Set location**, puis `r` dans le terminal 2 (la position est lue à l'ouverture de l'application) |
-| « Problème de connexion réseau » à l'inscription ou à la connexion | `demo:firebase` n'est pas lancé : le lancer, attendre « All emulators ready », puis `r` dans le terminal 2 |
-| « Project is incompatible with this version of Expo Go » | Désinstaller Expo Go de l'émulateur (appui long sur l'icône > désinstaller) puis relancer `npm run demo:android` : Expo réinstalle la version du SDK 53 |
-| Expo ne trouve pas l'émulateur | Le démarrer **avant** `npm run demo:android` depuis le *Device Manager* d'Android Studio |
-| Pas de photos dans la galerie | Refaire le glisser-déposer des images sur l'émulateur, ou utiliser « Photo » (appareil photo virtuel) |
-| `Directory "…emulator-data" does not exist` au lancement de `demo:firebase` | Les données n'ont pas encore été préparées : lancer `npm run demo:prepare` (étape 3) |
+| `java` introuvable ou mauvaise version | Installer le JDK 21 (section 1.1) puis **redémarrer VS Code** |
+| La carte n'est pas centrée sur ma position | Autoriser la localisation : iPhone > Réglages > **Expo Go** > Position > « Lorsque l'app est active », puis `r` dans le terminal 2 |
+| Pas de carte (fond vide) | L'iPhone n'a pas Internet : les fonds de carte en ont besoin (données mobiles avec le partage de connexion) |
+| `Directory "…emulator-data" does not exist` au lancement de `demo:firebase` | Les données n'ont pas encore été préparées : lancer `npm run demo:prepare` (section 4) |
 | Les données préparées ont disparu ou ont changé | Vérifier que le dossier `emulator-data/` existe ; répéter uniquement avec `demo:firebase` (qui n'enregistre rien), jamais avec `demo:prepare` |
-| Comportement étrange après une modification du code | Ctrl+C puis `npm run demo:android` (le cache est vidé à chaque lancement) |
+| Comportement étrange après une modification du code | Ctrl+C puis `npm run demo:phone` (le cache est vidé à chaque lancement) |

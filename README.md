@@ -32,60 +32,60 @@ Projet réalisé seul.
 | Mes adresses publiques et privées | Onglet « Mes adresses » (filtres Toutes / Publiques / Privées) et carte | `src/screens/MyAddressesScreen.tsx` |
 | Adresses publiques des autres | Onglet « Explorer » et carte | `src/screens/ExploreScreen.tsx` |
 | Avis et photos en commentaires | Note 1 à 5, commentaire et photo facultative sur les adresses publiques | `src/components/ReviewForm.tsx`, `src/services/reviewService.ts` |
-| Tests unitaires et fonctionnels | Jest + React Native Testing Library (198 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
+| Tests unitaires et fonctionnels | Jest + React Native Testing Library (202 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
 | Tests e2e | Maestro (4 parcours) | `.maestro/` |
 | Storybook | Storybook React Native 9 (11 composants, 31 stories) | `.rnstorybook/`, `src/components/*.stories.tsx` |
 
 ## Versions des outils
 
-Le projet utilise **Node.js LTS 20.18.0** (fichier `.nvmrc`).
+Le projet utilise **Node.js 20.20.2** (fichier `.nvmrc`), version LTS de la branche 20.
 
 | Outil | Version |
 | --- | --- |
-| Node.js | 20.18.0 |
-| npm | 10.8.2 (fourni avec Node 20.18.0) |
-| Expo SDK | 53 (`expo` 53.0.27) |
-| React Native | 0.79.6 |
-| React | 19.0.0 |
-| Expo Router | 5.1.11 |
+| Node.js | 20.20.2 (minimum 20.19.4) |
+| npm | 10.8.2 (fourni avec Node 20.20.2) |
+| Expo SDK | 54 (`expo` 54.0.37) |
+| React Native | 0.81.5 |
+| React | 19.1.0 |
+| Expo Router | 6.0.24 |
 | react-native-maps | 1.20.1 |
+| react-native-reanimated / react-native-worklets | 4.1.7 / 0.5.1 |
 | Firebase JS SDK | 12.19.0 |
-| TypeScript | 5.8.3 |
-| Jest / jest-expo | 29.7.0 / 53.0.14 |
+| TypeScript | 5.9.3 |
+| Jest / jest-expo | 29.7.0 / 54.0.18 |
 | React Native Testing Library | 13.3.3 |
-| Storybook / @storybook/react-native | 9.1.20 / 9.1.4 |
-| firebase-tools (émulateurs) | 15.33.0 |
+| Storybook / @storybook/react-native | 9.1.21 / 9.1.4 |
+| firebase-tools (émulateurs) | 15.34.0 |
 | @firebase/rules-unit-testing | 5.0.2 |
 | Java (émulateurs Firebase) | JDK 21 |
+| Expo Go (démo sur iPhone) | version de l'App Store (SDK 54) |
 | Maestro (tests e2e) | CLI 1.x (dernière version) |
 
-**Pourquoi Expo SDK 53 ?** C'est la version la plus récente compatible avec Node.js 20.18.0 : à partir du SDK 54, React Native (0.81+) exige Node.js ≥ 20.19.4.
-
-> Les paquets `@react-navigation/*` sont figés (section `overrides` du `package.json`) sur les versions publiées pendant la période du SDK 53 : les versions plus récentes ne sont plus compatibles avec Expo Router 5.
+**Pourquoi Node.js 20.20.2 et non 20.18.0 ?** La consigne attend Node.js LTS 20.18.0, et autorise une autre version si elle est documentée. La démonstration se fait sur iPhone avec **Expo Go de l'App Store, qui ne prend en charge que le SDK 54**. Le SDK 54 utilise React Native 0.81, qui exige **Node.js ≥ 20.19.4** : le projet utilise donc **Node.js 20.20.2**, dernière version LTS de la même branche 20 (même version majeure que celle de la consigne).
 
 ## Installation
 
 ```bash
-nvm use            # Node.js 20.18.0
+nvm use            # Node.js 20.20.2
 npm install
 ```
 
 ## Présenter l'application (soutenance)
 
-**Aucun projet Firebase ni paiement n'est nécessaire** : l'application tourne dans un émulateur Android sur le PC et utilise les **émulateurs Firebase** locaux (Authentication, Firestore, Storage), avec les mêmes règles de sécurité qu'un vrai projet.
+**Aucun projet Firebase ni paiement n'est nécessaire** : l'application tourne sur l'**iPhone dans Expo Go** et utilise les **émulateurs Firebase** du PC (Authentication, Firestore, Storage), avec les mêmes règles de sécurité qu'un vrai projet.
 
-👉 **Guide complet : [SOUTENANCE.md](SOUTENANCE.md)** (installation sous Windows, préparation des données, déroulé de la démo selon le barème, dépannage).
+👉 **Guide complet : [SOUTENANCE.md](SOUTENANCE.md)** (installation sous Windows, réseau, préparation des données, déroulé de la démo selon le barème, dépannage).
 
-En bref, après avoir démarré le téléphone virtuel depuis Android Studio :
+En bref, PC et iPhone sur le même réseau (idéalement le **partage de connexion de l'iPhone**) :
 
 ```bash
 npm run demo:prepare     # préparation : émulateurs Firebase, données enregistrées dans emulator-data/ à l'arrêt
 npm run demo:save        # (pendant demo:prepare) sauvegarder les données préparées
 npm run demo:firebase    # répétitions / jour J : repart des données préparées, n'enregistre rien
-npm run demo:android     # l'application dans Expo Go sur l'émulateur Android
+npm run demo:phone       # l'application : scanner le QR code avec l'appareil photo de l'iPhone
 ```
 
-Prérequis : Node.js 20.18.0, **JDK 21** (émulateurs Firebase), **Android Studio** avec un téléphone virtuel « Google Play ». Avec un vrai téléphone Android (Expo Go SDK 53, même Wi-Fi que le PC) : `npm run demo:phone` à la place de `demo:android`. Sur iPhone, Expo Go de l'App Store ne prend plus en charge le SDK 53.
+Prérequis sur le PC : Node.js 20.20.2, **JDK 21** (émulateurs Firebase). Sur l'iPhone : **Expo Go** (App Store).
 
 ## Architecture
 
@@ -207,13 +207,13 @@ Aucun index composite n'est nécessaire (les requêtes n'utilisent qu'un filtre 
 Lancer ensuite l'application :
 
 ```bash
-npm start          # puis "a" (Android) ou "i" (iOS)
+npm start          # puis scanner le QR code avec l'iPhone (Expo Go), ou "a" / "i" pour un émulateur / simulateur
 ```
 
-L'application fonctionne dans **Expo Go pour le SDK 53** :
+L'application fonctionne dans **Expo Go pour le SDK 54** :
 
+- **iPhone** : Expo Go de l'App Store (SDK 54).
 - **Émulateur Android / simulateur iOS** : `npm run android` ou `npm run ios` installe automatiquement la bonne version d'Expo Go.
-- **Téléphone Android** : installer Expo Go SDK 53 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=53&platform=android&device=true) (la version du Play Store suit le dernier SDK).
-- **iPhone** : l'App Store ne propose que la dernière version d'Expo Go ; utiliser un simulateur ou un build de développement (`npx expo run:ios`).
+- **Téléphone Android** : Expo Go SDK 54 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=54&platform=android&device=true) si la version du Play Store est plus récente.
 
 Pour un build natif Android (`npx expo run:android`), renseigner `GOOGLE_MAPS_API_KEY` (clé Google Maps SDK for Android) ; Expo Go n'en a pas besoin.
