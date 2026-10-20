@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     height: 120,
   },
   avatarLoading: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 60,
     backgroundColor: 'rgba(0,0,0,0.4)',
     alignItems: 'center',

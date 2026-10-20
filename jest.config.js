@@ -8,7 +8,7 @@ module.exports = {
   // tests/ : exécutés contre les émulateurs Firebase (jest.firebase.config.js)
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/', '<rootDir>/.maestro/'],
   transformIgnorePatterns: [
-    '/node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|storybook|@storybook/.*)',
+    '/node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg|standard-navigation|storybook|@storybook/.*)',
     '/node_modules/react-native-reanimated/plugin/',
   ],
   collectCoverageFrom: [

@@ -44,24 +44,24 @@ Le projet utilise **Node.js 20.20.2** (fichier `.nvmrc`), version LTS de la bran
 | --- | --- |
 | Node.js | 20.20.2 (minimum 20.19.4) |
 | npm | 10.8.2 (fourni avec Node 20.20.2) |
-| Expo SDK | 54 (`expo` 54.0.37) |
-| React Native | 0.81.5 |
-| React | 19.1.0 |
-| Expo Router | 6.0.24 |
-| react-native-maps | 1.20.1 |
-| react-native-reanimated / react-native-worklets | 4.1.7 / 0.5.1 |
+| Expo SDK | 57 (`expo` 57.0.30) |
+| React Native | 0.86.3 |
+| React | 19.2.3 |
+| Expo Router | 57.0.28 |
+| react-native-maps | 1.27.2 |
+| react-native-reanimated / react-native-worklets | 4.5.1 / 0.10.1 |
 | Firebase JS SDK | 12.19.0 |
-| TypeScript | 5.9.3 |
-| Jest / jest-expo | 29.7.0 / 54.0.18 |
+| TypeScript | 6.0.3 |
+| Jest / jest-expo | 29.7.0 / 57.0.6 |
 | React Native Testing Library | 13.3.3 |
 | Storybook / @storybook/react-native | 9.1.21 / 9.1.4 |
 | firebase-tools (émulateurs) | 15.34.0 |
 | @firebase/rules-unit-testing | 5.0.2 |
 | Java (émulateurs Firebase) | JDK 21 |
-| Expo Go (démo sur iPhone) | version de l'App Store (SDK 54) |
+| Expo Go (démo sur iPhone) | version de l'App Store (SDK 57) |
 | Maestro (tests e2e) | CLI 1.x (dernière version) |
 
-**Pourquoi Node.js 20.20.2 et non 20.18.0 ?** La consigne attend Node.js LTS 20.18.0, et autorise une autre version si elle est documentée. La démonstration se fait sur iPhone avec **Expo Go de l'App Store, qui ne prend en charge que le SDK 54**. Le SDK 54 utilise React Native 0.81, qui exige **Node.js ≥ 20.19.4** : le projet utilise donc **Node.js 20.20.2**, dernière version LTS de la même branche 20 (même version majeure que celle de la consigne).
+**Pourquoi Node.js 20.20.2 et non 20.18.0 ?** La consigne attend Node.js LTS 20.18.0, et autorise une autre version si elle est documentée. La démonstration se fait sur iPhone avec **Expo Go de l'App Store, qui ne prend en charge que le dernier SDK (57)**. Le SDK 57 utilise React Native 0.86, qui exige **Node.js ≥ 20.19.4** : le projet utilise donc **Node.js 20.20.2**, dernière version LTS de la même branche 20 (même version majeure que celle de la consigne).
 
 ## Installation
 
@@ -210,10 +210,10 @@ Lancer ensuite l'application :
 npm start          # puis scanner le QR code avec l'iPhone (Expo Go), ou "a" / "i" pour un émulateur / simulateur
 ```
 
-L'application fonctionne dans **Expo Go pour le SDK 54** :
+L'application fonctionne dans **Expo Go pour le SDK 57** :
 
-- **iPhone** : Expo Go de l'App Store (SDK 54).
+- **iPhone** : Expo Go de l'App Store (SDK 57).
 - **Émulateur Android / simulateur iOS** : `npm run android` ou `npm run ios` installe automatiquement la bonne version d'Expo Go.
-- **Téléphone Android** : Expo Go SDK 54 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=54&platform=android&device=true) si la version du Play Store est plus récente.
+- **Téléphone Android** : Expo Go SDK 57 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=57&platform=android&device=true) si la version du Play Store est plus récente.
 
 Pour un build natif Android (`npx expo run:android`), renseigner `GOOGLE_MAPS_API_KEY` (clé Google Maps SDK for Android) ; Expo Go n'en a pas besoin.
