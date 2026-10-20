@@ -9,12 +9,12 @@ Projet réalisé seul.
 1. [Fonctionnalités et barème](#fonctionnalités-et-barème)
 2. [Versions des outils](#versions-des-outils)
 3. [Installation](#installation)
-4. [Configuration Firebase](#configuration-firebase)
-5. [Lancer l'application](#lancer-lapplication)
-6. [Architecture](#architecture)
-7. [Modèle de données et sécurité](#modèle-de-données-et-sécurité)
-8. [Tests](#tests)
-9. [Storybook](#storybook)
+4. [Présenter l'application (soutenance)](#présenter-lapplication-soutenance)
+5. [Architecture](#architecture)
+6. [Modèle de données et sécurité](#modèle-de-données-et-sécurité)
+7. [Tests](#tests)
+8. [Storybook](#storybook)
+9. [Facultatif : vrai projet Firebase en ligne](#facultatif--vrai-projet-firebase-en-ligne)
 
 ## Fonctionnalités et barème
 
@@ -32,7 +32,7 @@ Projet réalisé seul.
 | Mes adresses publiques et privées | Onglet « Mes adresses » (filtres Toutes / Publiques / Privées) et carte | `src/screens/MyAddressesScreen.tsx` |
 | Adresses publiques des autres | Onglet « Explorer » et carte | `src/screens/ExploreScreen.tsx` |
 | Avis et photos en commentaires | Note 1 à 5, commentaire et photo facultative sur les adresses publiques | `src/components/ReviewForm.tsx`, `src/services/reviewService.ts` |
-| Tests unitaires et fonctionnels | Jest + React Native Testing Library (194 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
+| Tests unitaires et fonctionnels | Jest + React Native Testing Library (197 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
 | Tests e2e | Maestro (4 parcours) | `.maestro/` |
 | Storybook | Storybook React Native 9 (11 composants, 31 stories) | `.rnstorybook/`, `src/components/*.stories.tsx` |
 
@@ -70,51 +70,57 @@ nvm use            # Node.js 20.18.0
 npm install
 ```
 
-## Configuration Firebase
+## Présenter l'application (soutenance)
 
-1. Créer un projet sur la [console Firebase](https://console.firebase.google.com/).
-2. **Authentication** : activer le fournisseur « Adresse e-mail/Mot de passe ».
-3. **Firestore Database** : créer la base (mode production).
-4. **Storage** : activer Cloud Storage (les nouveaux buckets nécessitent le forfait Blaze).
-5. Ajouter une **application Web** au projet et copier sa configuration dans un fichier `.env.local` :
+**Aucun projet Firebase ni paiement n'est nécessaire.** L'application utilise les **émulateurs Firebase** qui tournent sur l'ordinateur (Authentication, Firestore, Storage), avec les mêmes règles de sécurité (`firestore.rules`, `storage.rules`) qu'un vrai projet.
 
-   ```bash
-   cp .env.example .env.local
-   # puis renseigner les variables EXPO_PUBLIC_FIREBASE_*
-   ```
+### Prérequis
 
-6. Déployer les règles de sécurité :
+- Node.js 20.18.0 et `npm install`
+- **JDK 21** (par exemple [Eclipse Temurin](https://adoptium.net/)) : nécessaire aux émulateurs Firebase
+- **Android Studio** avec un émulateur Android (recommandé), ou un téléphone Android
+- Une connexion Internet pour les fonds de carte (Google Maps) et pour le premier lancement
 
-   ```bash
-   npx firebase login
-   npx firebase use --add      # choisir le projet créé
-   npm run deploy:rules
-   ```
-
-Aucun index composite n'est nécessaire (les requêtes n'utilisent qu'un filtre d'égalité, le tri est fait côté application).
-
-## Lancer l'application
+### Option recommandée : émulateur Android sur l'ordinateur
 
 ```bash
-npm start          # puis "a" (Android) ou "i" (iOS)
+npm run demo:firebase    # terminal 1 : émulateurs Firebase (données sauvegardées)
+npm run demo:android     # terminal 2 : l'application dans Expo Go sur l'émulateur Android
 ```
 
-L'application fonctionne dans **Expo Go pour le SDK 53** :
+- Au premier lancement, Expo installe automatiquement **Expo Go pour le SDK 53** dans l'émulateur.
+- **Position** : l'émulateur Android est placé en Californie par défaut. Pour centrer la carte ailleurs (ex. Paris) : bouton `⋯` (*Extended controls*) > *Location*, choisir le lieu puis *Set location*, et relancer l'application.
+- **Photos** : glisser-déposer des images sur la fenêtre de l'émulateur pour les ajouter à la galerie, ou utiliser l'appareil photo de l'émulateur (scène virtuelle).
 
-- **Émulateur Android / simulateur iOS** : `npm run android` ou `npm run ios` installe automatiquement la bonne version d'Expo Go.
-- **Téléphone Android** : installer Expo Go SDK 53 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=53&platform=android&device=true) (la version du Play Store suit le dernier SDK).
-- **iPhone** : l'App Store ne propose que la dernière version d'Expo Go ; utiliser un simulateur ou un build de développement (`npx expo run:ios`).
+### Autre option : vrai téléphone Android
 
-Pour un build natif Android (`npx expo run:android`), renseigner `GOOGLE_MAPS_API_KEY` (clé Google Maps SDK for Android) ; Expo Go n'en a pas besoin.
+1. Installer **Expo Go SDK 53** depuis [expo.dev/go](https://expo.dev/go?sdkVersion=53&platform=android&device=true) (la version du Play Store suit le dernier SDK).
+2. Connecter le téléphone et l'ordinateur **au même Wi-Fi** (le partage de connexion du téléphone fonctionne aussi ; les Wi-Fi d'école bloquent souvent les échanges entre appareils).
+3. Lancer `npm run demo:firebase` puis `npm run demo:phone`, et scanner le QR code avec Expo Go. L'adresse de l'ordinateur est détectée automatiquement.
 
-### Utiliser les émulateurs Firebase (sans projet Firebase)
+- Sous Windows, autoriser Node.js et Java dans le pare-feu quand il le demande.
+- Les photos enregistrées contiennent l'adresse de l'ordinateur sur le réseau : préparer les données sur le même réseau que celui de la soutenance (ou utiliser l'émulateur Android).
+- iPhone : l'App Store ne propose que la dernière version d'Expo Go, incompatible avec le SDK 53 ; utiliser l'émulateur Android.
 
-```bash
-npm run emulators      # Auth (9099), Firestore (8080), Storage (9199), interface : http://localhost:4000
-npm run start:e2e      # lance l'application branchée sur les émulateurs (.env.e2e)
-```
+### Préparer les données à l'avance
 
-`.env.e2e` vise l'émulateur Android (`10.0.2.2`) ; pour le simulateur iOS, remplacer par `localhost`.
+`npm run demo:firebase` recharge au démarrage les données du dossier `emulator-data/` et les y enregistre à l'arrêt : arrêter avec **Ctrl+C** et attendre la fin de l'export avant de fermer le terminal. Interface des émulateurs (comptes, données, photos, requêtes autorisées / refusées) : http://localhost:4000.
+
+Conseil : préparer deux comptes (par exemple Alice et Bob), quelques adresses publiques et privées avec photos, et un avis.
+
+### Déroulé possible (barème)
+
+| Étape | À montrer |
+| --- | --- |
+| Projet Firebase sécurisé | `firestore.rules`, `storage.rules`, puis `npm run test:firebase` (règles + parcours complet sur émulateurs) ; onglet *Requests* de Firestore dans l'interface des émulateurs |
+| Inscription, connexion, déconnexion | Créer un compte, se déconnecter (Profil), se reconnecter, message en cas de mauvais mot de passe |
+| Photo de profil | Profil > Galerie / Photo, puis Supprimer la photo |
+| Carte | Onglet Carte centré sur la position, légende des repères, bouton de recentrage |
+| Création d'adresse | Bouton `+` : nom, description, photo, interrupteur privée / publique, emplacement |
+| Visualiser les adresses | « Mes adresses » (filtres Publiques / Privées) ; avec l'autre compte, « Explorer » montre seulement les adresses publiques |
+| Avis et photos | Sur l'adresse publique de l'autre compte : note, commentaire et photo |
+| Suppression | Détail de sa propre adresse > Supprimer l'adresse |
+| Tests | `npm test`, `npm run test:firebase`, `npm run e2e` (voir [Tests](#tests)), `npm run start:storybook` |
 
 ## Architecture
 
@@ -186,7 +192,7 @@ Parcours dans `.maestro/flows/` :
 Prérequis : [Maestro CLI](https://maestro.mobile.dev) et un émulateur Android démarré.
 
 ```bash
-# Terminal 1 : backend local
+# Terminal 1 : backend local sans sauvegarde (les comptes de test ne se mélangent pas aux données de démonstration)
 npm run emulators
 # Terminal 2 : application dans Expo Go, branchée sur les émulateurs
 npm run start:e2e
@@ -205,3 +211,42 @@ npm run start:storybook     # puis ouvrir dans Expo Go
 ```
 
 Les stories sont à côté des composants (`src/components/*.stories.tsx`). Après l'ajout d'un fichier de stories, `npm run start:storybook` régénère `.rnstorybook/storybook.requires.ts` (ou `npm run storybook:generate`).
+
+## Facultatif : vrai projet Firebase en ligne
+
+Inutile pour la soutenance. Pour un déploiement réel, Authentication et Firestore sont gratuits (forfait Spark), mais **Cloud Storage (photos) exige le forfait Blaze** (carte bancaire, avec un quota gratuit).
+
+1. Créer un projet sur la [console Firebase](https://console.firebase.google.com/).
+2. **Authentication** : activer le fournisseur « Adresse e-mail/Mot de passe ».
+3. **Firestore Database** : créer la base (mode production).
+4. **Storage** : activer Cloud Storage (forfait Blaze).
+5. Ajouter une **application Web** au projet et copier sa configuration dans un fichier `.env.local` :
+
+   ```bash
+   cp .env.example .env.local
+   # puis renseigner les variables EXPO_PUBLIC_FIREBASE_*
+   ```
+
+6. Déployer les règles de sécurité :
+
+   ```bash
+   npx firebase login
+   npx firebase use --add      # choisir le projet créé
+   npm run deploy:rules
+   ```
+
+Aucun index composite n'est nécessaire (les requêtes n'utilisent qu'un filtre d'égalité, le tri est fait côté application).
+
+Lancer ensuite l'application :
+
+```bash
+npm start          # puis "a" (Android) ou "i" (iOS)
+```
+
+L'application fonctionne dans **Expo Go pour le SDK 53** :
+
+- **Émulateur Android / simulateur iOS** : `npm run android` ou `npm run ios` installe automatiquement la bonne version d'Expo Go.
+- **Téléphone Android** : installer Expo Go SDK 53 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=53&platform=android&device=true) (la version du Play Store suit le dernier SDK).
+- **iPhone** : l'App Store ne propose que la dernière version d'Expo Go ; utiliser un simulateur ou un build de développement (`npx expo run:ios`).
+
+Pour un build natif Android (`npx expo run:android`), renseigner `GOOGLE_MAPS_API_KEY` (clé Google Maps SDK for Android) ; Expo Go n'en a pas besoin.

@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import {
   type Auth,
@@ -9,6 +10,8 @@ import {
 } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
+
+import { getEmulatorHost } from './emulatorHost';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -36,7 +39,10 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 if (process.env.EXPO_PUBLIC_USE_FIREBASE_EMULATOR === 'true') {
-  const host = process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST || 'localhost';
+  const host = getEmulatorHost(
+    process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST,
+    Constants.expoConfig?.hostUri,
+  );
   connectAuthEmulator(auth, `http://${host}:9099`, { disableWarnings: true });
   connectFirestoreEmulator(db, host, 8080);
   connectStorageEmulator(storage, host, 9199);
