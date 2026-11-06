@@ -112,6 +112,9 @@ Dans Jest, le SDK Firebase et les services sont remplacés par des simulations (
 **Pourquoi Maestro pour les tests e2e ?**
 C'est l'outil recommandé par Expo : les parcours sont écrits en YAML lisible (`.maestro/flows/`), ils fonctionnent avec Expo Go sans configuration native, contrairement à Detox. Ils pilotent un émulateur ou un simulateur.
 
+**Pouvez-vous lancer les tests e2e devant nous ?**
+Maestro pilote un émulateur Android ou un simulateur iOS, pas un vrai iPhone, et je n'ai pas d'émulateur pour la démo. Les 4 parcours sont dans `.maestro/flows/` : je peux les montrer et expliquer ce que chacun vérifie (inscription, connexion, création, visibilité, avis, suppression). Ils se lancent avec `npm run e2e`.
+
 **À quoi sert Storybook ?**
 À développer et montrer chaque composant isolément, dans tous ses états (bouton désactivé, adresse privée, avis avec photo…). Les 31 stories sont aussi rendues dans Jest pour vérifier qu'elles restent valides (`src/components/__tests__/stories.test.tsx`).
 
