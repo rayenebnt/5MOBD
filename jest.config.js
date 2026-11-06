@@ -2,8 +2,10 @@
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  // Le premier rendu d'un écran peut dépasser 5 s sur une machine plus lente (Windows)
-  testTimeout: 20000,
+  // Le premier rendu d'un écran peut être long sur une machine plus lente (Windows) :
+  // moins de fichiers en parallèle et un délai plus large par test
+  maxWorkers: '50%',
+  testTimeout: 60000,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
