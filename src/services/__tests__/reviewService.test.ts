@@ -45,7 +45,7 @@ describe('addReview', () => {
 });
 
 describe('subscribeToReviews', () => {
-  it("récupère les avis de l'adresse, du plus récent au plus ancien", () => {
+  it("récupère les avis de l'adresse, du plus récent au plus ancien", async () => {
     const onData = jest.fn();
     mockedFirestore.onSnapshot.mockImplementationOnce(((_ref: unknown, next: (s: unknown) => void) => {
       next({

@@ -8,7 +8,7 @@ type IconName = keyof typeof Ionicons.glyphMap;
 
 function tabIcon(name: IconName) {
   return ({ color, size }: { color: ColorValue; size: number }) => (
-    <Ionicons name={name} color={color} size={size} />
+    <Ionicons name={name} color={color as string} size={size} />
   );
 }
 

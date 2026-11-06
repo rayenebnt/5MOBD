@@ -8,17 +8,17 @@ import {
 } from '../validation';
 
 describe('isValidEmail', () => {
-  it.each(['alice@example.com', ' bob.durand@mail.fr '])('accepte %s', (email) => {
+  it.each(['alice@example.com', ' bob.durand@mail.fr '])('accepte %s', async (email) => {
     expect(isValidEmail(email)).toBe(true);
   });
 
-  it.each(['', 'alice', 'alice@', 'alice@example', 'a b@c.d'])('refuse "%s"', (email) => {
+  it.each(['', 'alice', 'alice@', 'alice@example', 'a b@c.d'])('refuse "%s"', async (email) => {
     expect(isValidEmail(email)).toBe(false);
   });
 });
 
 describe('hasErrors', () => {
-  it('détecte la présence d’au moins une erreur', () => {
+  it('détecte la présence d’au moins une erreur', async () => {
     expect(hasErrors({})).toBe(false);
     expect(hasErrors({ email: undefined })).toBe(false);
     expect(hasErrors({ email: 'Erreur' })).toBe(true);
@@ -26,7 +26,7 @@ describe('hasErrors', () => {
 });
 
 describe('validateLogin', () => {
-  it('exige un e-mail valide et un mot de passe', () => {
+  it('exige un e-mail valide et un mot de passe', async () => {
     expect(validateLogin({ email: '', password: '' })).toEqual({
       email: "L'e-mail est obligatoire.",
       password: 'Le mot de passe est obligatoire.',
@@ -36,7 +36,7 @@ describe('validateLogin', () => {
     });
   });
 
-  it('ne renvoie aucune erreur pour des identifiants valides', () => {
+  it('ne renvoie aucune erreur pour des identifiants valides', async () => {
     expect(validateLogin({ email: 'alice@example.com', password: 'secret' })).toEqual({});
   });
 });
@@ -49,22 +49,22 @@ describe('validateRegister', () => {
     confirmPassword: 'secret1',
   };
 
-  it('accepte un formulaire valide', () => {
+  it('accepte un formulaire valide', async () => {
     expect(validateRegister(valid)).toEqual({});
   });
 
-  it('exige un nom', () => {
+  it('exige un nom', async () => {
     expect(validateRegister({ ...valid, displayName: '   ' }).displayName).toBe('Le nom est obligatoire.');
     expect(validateRegister({ ...valid, displayName: 'x'.repeat(51) }).displayName).toMatch(/50/);
   });
 
-  it('exige un mot de passe de 6 caractères minimum', () => {
+  it('exige un mot de passe de 6 caractères minimum', async () => {
     expect(validateRegister({ ...valid, password: '123', confirmPassword: '123' }).password).toMatch(
       /au moins 6/,
     );
   });
 
-  it('vérifie la confirmation du mot de passe', () => {
+  it('vérifie la confirmation du mot de passe', async () => {
     expect(validateRegister({ ...valid, confirmPassword: 'autre' }).confirmPassword).toBe(
       'Les mots de passe ne correspondent pas.',
     );
@@ -74,33 +74,33 @@ describe('validateRegister', () => {
 describe('validateAddress', () => {
   const valid = { name: 'Bistrot', description: '', latitude: 48.8, longitude: 2.3 };
 
-  it('accepte une adresse avec un nom et un emplacement', () => {
+  it('accepte une adresse avec un nom et un emplacement', async () => {
     expect(validateAddress(valid)).toEqual({});
   });
 
-  it('exige un nom de 80 caractères maximum', () => {
+  it('exige un nom de 80 caractères maximum', async () => {
     expect(validateAddress({ ...valid, name: ' ' }).name).toBe('Le nom est obligatoire.');
     expect(validateAddress({ ...valid, name: 'x'.repeat(81) }).name).toMatch(/80/);
   });
 
-  it('limite la description à 500 caractères', () => {
+  it('limite la description à 500 caractères', async () => {
     expect(validateAddress({ ...valid, description: 'x'.repeat(501) }).description).toMatch(/500/);
   });
 
-  it('exige un emplacement', () => {
+  it('exige un emplacement', async () => {
     expect(validateAddress({ ...valid, latitude: null, longitude: null }).location).toBeDefined();
   });
 });
 
 describe('validateReview', () => {
-  it('exige une note entière entre 1 et 5', () => {
+  it('exige une note entière entre 1 et 5', async () => {
     expect(validateReview({ rating: 0, comment: 'Bien' }).rating).toBeDefined();
     expect(validateReview({ rating: 6, comment: 'Bien' }).rating).toBeDefined();
     expect(validateReview({ rating: 2.5, comment: 'Bien' }).rating).toBeDefined();
     expect(validateReview({ rating: 5, comment: 'Bien' })).toEqual({});
   });
 
-  it('exige un commentaire de 500 caractères maximum', () => {
+  it('exige un commentaire de 500 caractères maximum', async () => {
     expect(validateReview({ rating: 4, comment: '  ' }).comment).toBe('Le commentaire est obligatoire.');
     expect(validateReview({ rating: 4, comment: 'x'.repeat(501) }).comment).toMatch(/500/);
   });

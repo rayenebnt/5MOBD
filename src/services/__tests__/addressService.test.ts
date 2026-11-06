@@ -31,7 +31,7 @@ const input = {
 };
 
 describe('getDisplayName', () => {
-  it('utilise le nom, sinon l’e-mail', () => {
+  it('utilise le nom, sinon l’e-mail', async () => {
     expect(getDisplayName(currentUser)).toBe('Alice Martin');
     expect(getDisplayName({ ...currentUser, displayName: null })).toBe('alice@example.com');
     expect(getDisplayName({ ...currentUser, displayName: null, email: null })).toBe('Utilisateur');
@@ -106,7 +106,7 @@ describe('abonnements', () => {
       createdAt: fakeTimestamp(date),
     });
 
-  it('récupère mes adresses publiques et privées, triées par date', () => {
+  it('récupère mes adresses publiques et privées, triées par date', async () => {
     const onData = jest.fn();
     mockedFirestore.onSnapshot.mockImplementationOnce(((_query: unknown, next: (s: unknown) => void) => {
       next({ docs: [addressDoc('old', 'user-1', true, '2026-01-01'), addressDoc('new', 'user-1', false, '2026-05-01')] });
@@ -119,7 +119,7 @@ describe('abonnements', () => {
     expect(onData.mock.calls[0][0].map((a: { id: string }) => a.id)).toEqual(['new', 'old']);
   });
 
-  it('récupère uniquement les adresses publiques des autres utilisateurs', () => {
+  it('récupère uniquement les adresses publiques des autres utilisateurs', async () => {
     const onData = jest.fn();
     mockedFirestore.onSnapshot.mockImplementationOnce(((_query: unknown, next: (s: unknown) => void) => {
       next({ docs: [addressDoc('mine', 'user-1', true, '2026-01-01'), addressDoc('bob', 'user-2', true, '2026-02-01')] });
@@ -132,7 +132,7 @@ describe('abonnements', () => {
     expect(onData.mock.calls[0][0].map((a: { id: string }) => a.id)).toEqual(['bob']);
   });
 
-  it("renvoie null si l'adresse n'existe pas", () => {
+  it("renvoie null si l'adresse n'existe pas", async () => {
     const onData = jest.fn();
     mockedFirestore.onSnapshot.mockImplementationOnce(((_ref: unknown, next: (s: unknown) => void) => {
       next(fakeDoc('a1', undefined));
@@ -143,7 +143,7 @@ describe('abonnements', () => {
     expect(onData).toHaveBeenCalledWith(null);
   });
 
-  it('transmet les erreurs (ex. permission refusée)', () => {
+  it('transmet les erreurs (ex. permission refusée)', async () => {
     const onError = jest.fn();
     const error = new Error('permission-denied');
     mockedFirestore.onSnapshot.mockImplementationOnce(((_ref: unknown, _next: unknown, fail: (e: Error) => void) => {

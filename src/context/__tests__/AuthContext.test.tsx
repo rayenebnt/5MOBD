@@ -31,18 +31,18 @@ beforeEach(() => {
 const wrapper = ({ children }: { children: ReactNode }) => <AuthProvider>{children}</AuthProvider>;
 
 describe('AuthProvider', () => {
-  it("attend l'état d'authentification Firebase", () => {
-    const { result } = renderHook(() => useAuth(), { wrapper });
+  it("attend l'état d'authentification Firebase", async () => {
+    const { result } = await renderHook(() => useAuth(), { wrapper });
     expect(result.current.initializing).toBe(true);
 
-    act(() => emitAuthChange(currentUser));
+    await act(() => emitAuthChange(currentUser));
     expect(result.current).toMatchObject({ initializing: false, user: currentUser });
   });
 
   it('connecte puis déconnecte un utilisateur', async () => {
     mocked.loginUser.mockResolvedValueOnce(currentUser);
-    const { result } = renderHook(() => useAuth(), { wrapper });
-    act(() => emitAuthChange(null));
+    const { result } = await renderHook(() => useAuth(), { wrapper });
+    await act(() => emitAuthChange(null));
 
     await act(() => result.current.signIn('alice@example.com', 'secret1'));
     expect(mocked.loginUser).toHaveBeenCalledWith('alice@example.com', 'secret1');
@@ -55,7 +55,7 @@ describe('AuthProvider', () => {
 
   it("inscrit un utilisateur avec son nom", async () => {
     mocked.registerUser.mockResolvedValueOnce(currentUser);
-    const { result } = renderHook(() => useAuth(), { wrapper });
+    const { result } = await renderHook(() => useAuth(), { wrapper });
 
     const input = { displayName: 'Alice Martin', email: 'alice@example.com', password: 'secret1' };
     await act(() => result.current.signUp(input));
@@ -68,8 +68,8 @@ describe('AuthProvider', () => {
     const withPhoto = { ...currentUser, photoURL: 'https://cdn.example.com/avatar.jpg' };
     mocked.updateProfilePhoto.mockResolvedValueOnce(withPhoto);
     mocked.removeProfilePhoto.mockResolvedValueOnce(currentUser);
-    const { result } = renderHook(() => useAuth(), { wrapper });
-    act(() => emitAuthChange(currentUser));
+    const { result } = await renderHook(() => useAuth(), { wrapper });
+    await act(() => emitAuthChange(currentUser));
 
     await act(() => result.current.updatePhoto('file:///me.jpg'));
     expect(mocked.updateProfilePhoto).toHaveBeenCalledWith('file:///me.jpg');
@@ -91,12 +91,12 @@ describe('AuthProvider', () => {
     function Gate() {
       return useAuth().initializing ? null : <Name />;
     }
-    render(<Gate />, { wrapper });
+    await render(<Gate />, { wrapper });
     await waitFor(() => expect(screen.getByText('Alice Martin')).toBeTruthy());
   });
 
-  it('refuse useAuth en dehors du provider', () => {
+  it('refuse useAuth en dehors du provider', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    expect(() => renderHook(() => useAuth())).toThrow('useAuth doit être utilisé dans un <AuthProvider>.');
+    await expect(renderHook(() => useAuth())).rejects.toThrow('useAuth doit être utilisé dans un <AuthProvider>.');
   });
 });

@@ -19,8 +19,8 @@ export function createAuthValue(overrides: Partial<AuthContextValue> = {}): Auth
 }
 
 /** Rend un composant avec un contexte d'authentification simulé. */
-export function renderWithAuth(ui: ReactElement, overrides: Partial<AuthContextValue> = {}) {
+export async function renderWithAuth(ui: ReactElement, overrides: Partial<AuthContextValue> = {}) {
   const auth = createAuthValue(overrides);
-  const utils = render(<AuthContext.Provider value={auth}>{ui}</AuthContext.Provider>);
+  const utils = await render(<AuthContext.Provider value={auth}>{ui}</AuthContext.Provider>);
   return { ...utils, auth };
 }

@@ -81,7 +81,7 @@ describe('loginUser / logoutUser', () => {
 });
 
 describe('subscribeToAuthChanges', () => {
-  it("notifie l'utilisateur connecté ou null", () => {
+  it("notifie l'utilisateur connecté ou null", async () => {
     const callback = jest.fn();
     mockedAuth.onAuthStateChanged.mockImplementationOnce(((_auth: unknown, next: (u: unknown) => void) => {
       next(firebaseUser());

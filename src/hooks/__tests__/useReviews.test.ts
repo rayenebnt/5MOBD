@@ -12,19 +12,19 @@ jest.mock('@/services/reviewService', () => ({
 const mocked = reviewService as jest.Mocked<typeof reviewService>;
 
 describe('useReviews', () => {
-  it("charge les avis d'une adresse publique", () => {
+  it("charge les avis d'une adresse publique", async () => {
     const reviews = [makeReview()];
     mocked.subscribeToReviews.mockImplementation((_id, onData) => {
       onData(reviews);
       return jest.fn();
     });
 
-    const { result } = renderHook(() => useReviews('a1', true));
+    const { result } = await renderHook(() => useReviews('a1', true));
     expect(result.current).toEqual({ reviews, loading: false, error: null });
   });
 
-  it("ne s'abonne pas pour une adresse privée", () => {
-    const { result } = renderHook(() => useReviews('a1', false));
+  it("ne s'abonne pas pour une adresse privée", async () => {
+    const { result } = await renderHook(() => useReviews('a1', false));
     expect(mocked.subscribeToReviews).not.toHaveBeenCalled();
     expect(result.current).toEqual({ reviews: [], loading: false, error: null });
   });

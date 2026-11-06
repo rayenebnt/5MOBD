@@ -32,41 +32,41 @@ Projet réalisé seul.
 | Mes adresses publiques et privées | Onglet « Mes adresses » (filtres Toutes / Publiques / Privées) et carte | `src/screens/MyAddressesScreen.tsx` |
 | Adresses publiques des autres | Onglet « Explorer » et carte | `src/screens/ExploreScreen.tsx` |
 | Avis et photos en commentaires | Note 1 à 5, commentaire et photo facultative sur les adresses publiques | `src/components/ReviewForm.tsx`, `src/services/reviewService.ts` |
-| Tests unitaires et fonctionnels | Jest + React Native Testing Library (202 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
+| Tests unitaires et fonctionnels | Jest + React Native Testing Library (203 tests) + tests sur émulateurs Firebase (41 tests) | `src/**/__tests__/`, `tests/` |
 | Tests e2e | Maestro (4 parcours) | `.maestro/` |
 | Storybook | Storybook React Native 9 (11 composants, 31 stories) | `.rnstorybook/`, `src/components/*.stories.tsx` |
 
 ## Versions des outils
 
-Le projet utilise **Node.js 20.20.2** (fichier `.nvmrc`), version LTS de la branche 20.
+Le projet utilise **Node.js 22.22.0** (fichier `.nvmrc`), version LTS de la branche 22.
 
 | Outil | Version |
 | --- | --- |
-| Node.js | 20.20.2 (minimum 20.19.4) |
-| npm | 10.8.2 (fourni avec Node 20.20.2) |
-| Expo SDK | 57 (`expo` 57.0.30) |
-| React Native | 0.86.3 |
-| React | 19.2.3 |
-| Expo Router | 57.0.28 |
-| react-native-maps | 1.27.2 |
-| react-native-reanimated / react-native-worklets | 4.5.1 / 0.10.1 |
+| Node.js | 22.22.0 (minimum 22.13.0) |
+| npm | 10.9.4 (fourni avec Node 22.22.0) |
+| Expo SDK | 58 (`expo` 58.0.23) |
+| React Native | 0.88.1 |
+| React | 19.3.0 |
+| Expo Router | 58.0.30 |
+| react-native-maps | 1.29.11 |
+| react-native-reanimated / react-native-worklets | 4.7.1 / 0.13.0 |
 | Firebase JS SDK | 12.19.0 |
 | TypeScript | 6.0.3 |
-| Jest / jest-expo | 29.7.0 / 57.0.6 |
-| React Native Testing Library | 13.3.3 |
+| Jest / jest-expo | 30.5.2 / 58.0.14 |
+| React Native Testing Library | 14.1.0 |
 | Storybook / @storybook/react-native | 9.1.21 / 9.1.4 |
-| firebase-tools (émulateurs) | 15.34.0 |
+| firebase-tools (émulateurs) | 15.35.0 |
 | @firebase/rules-unit-testing | 5.0.2 |
 | Java (émulateurs Firebase) | JDK 21 |
-| Expo Go (démo sur iPhone) | version de l'App Store (SDK 57) |
+| Expo Go (démo sur iPhone) | version de l'App Store (SDK 58) |
 | Maestro (tests e2e) | CLI 1.x (dernière version) |
 
-**Pourquoi Node.js 20.20.2 et non 20.18.0 ?** La consigne attend Node.js LTS 20.18.0, et autorise une autre version si elle est documentée. La démonstration se fait sur iPhone avec **Expo Go de l'App Store, qui ne prend en charge que le dernier SDK (57)**. Le SDK 57 utilise React Native 0.86, qui exige **Node.js ≥ 20.19.4** : le projet utilise donc **Node.js 20.20.2**, dernière version LTS de la même branche 20 (même version majeure que celle de la consigne).
+**Pourquoi Node.js 22 et non 20.18.0 ?** La consigne attend Node.js LTS 20.18.0, et autorise une autre version si elle est documentée. La démonstration se fait sur iPhone avec **Expo Go de l'App Store, qui ne prend en charge que le dernier SDK d'Expo (58)** : il est impossible d'y installer une version plus ancienne. Le SDK 58 utilise React Native 0.88, qui exige **Node.js ≥ 22.13.0** : le projet utilise donc **Node.js 22.22.0**, version LTS de la branche 22.
 
 ## Installation
 
 ```bash
-nvm use            # Node.js 20.20.2
+nvm use            # Node.js 22.22.0
 npm install
 ```
 
@@ -85,7 +85,7 @@ npm run demo:firebase    # répétitions / jour J : repart des données prépar�
 npm run demo:phone       # l'application : scanner le QR code avec l'appareil photo de l'iPhone
 ```
 
-Prérequis sur le PC : Node.js 20.20.2, **JDK 21** (émulateurs Firebase). Sur l'iPhone : **Expo Go** (App Store).
+Prérequis sur le PC : Node.js 22.22.0, **JDK 21** (émulateurs Firebase). Sur l'iPhone : **Expo Go** (App Store).
 
 ## Architecture
 
@@ -210,10 +210,10 @@ Lancer ensuite l'application :
 npm start          # puis scanner le QR code avec l'iPhone (Expo Go), ou "a" / "i" pour un émulateur / simulateur
 ```
 
-L'application fonctionne dans **Expo Go pour le SDK 57** :
+L'application fonctionne dans **Expo Go pour le SDK 58** :
 
-- **iPhone** : Expo Go de l'App Store (SDK 57).
+- **iPhone** : Expo Go de l'App Store (SDK 58).
 - **Émulateur Android / simulateur iOS** : `npm run android` ou `npm run ios` installe automatiquement la bonne version d'Expo Go.
-- **Téléphone Android** : Expo Go SDK 57 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=57&platform=android&device=true) si la version du Play Store est plus récente.
+- **Téléphone Android** : Expo Go SDK 58 depuis [expo.dev/go](https://expo.dev/go?sdkVersion=58&platform=android&device=true) si la version du Play Store est plus récente.
 
 Pour un build natif Android (`npx expo run:android`), renseigner `GOOGLE_MAPS_API_KEY` (clé Google Maps SDK for Android) ; Expo Go n'en a pas besoin.

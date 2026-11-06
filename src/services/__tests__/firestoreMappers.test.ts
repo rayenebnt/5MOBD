@@ -3,7 +3,7 @@ import { toAddress, toDate, toReview } from '../firestoreMappers';
 import { fakeDoc, fakeTimestamp } from '@/testing/firestoreMock';
 
 describe('toDate', () => {
-  it('convertit un Timestamp Firestore ou une Date', () => {
+  it('convertit un Timestamp Firestore ou une Date', async () => {
     const date = new Date('2026-01-01');
     expect(toDate(date)).toBe(date);
     expect(toDate(fakeTimestamp('2026-02-01'))).toEqual(new Date('2026-02-01'));
@@ -13,7 +13,7 @@ describe('toDate', () => {
 });
 
 describe('toAddress', () => {
-  it('construit une adresse à partir du document', () => {
+  it('construit une adresse à partir du document', async () => {
     const snapshot = fakeDoc('a1', {
       ownerId: 'u1',
       ownerName: 'Alice',
@@ -39,14 +39,14 @@ describe('toAddress', () => {
     });
   });
 
-  it('applique des valeurs par défaut sûres', () => {
+  it('applique des valeurs par défaut sûres', async () => {
     const address = toAddress(fakeDoc('a2', { ownerId: 'u1', latitude: 1, longitude: 2 }) as never);
     expect(address).toMatchObject({ name: '', description: '', photoURL: null, isPublic: false, createdAt: null });
   });
 });
 
 describe('toReview', () => {
-  it("construit un avis rattaché à l'adresse", () => {
+  it("construit un avis rattaché à l'adresse", async () => {
     const review = toReview(
       fakeDoc('r1', { authorId: 'u2', authorName: 'Bob', rating: 5, comment: 'Top' }) as never,
       'a1',

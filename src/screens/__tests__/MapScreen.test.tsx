@@ -38,7 +38,7 @@ beforeEach(() => {
 
 describe('Écran carte', () => {
   it("centre automatiquement la carte sur la position de l'utilisateur", async () => {
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
 
     expect(screen.getByTestId('map-view')).toHaveProp('showsUserLocation', true);
     await waitFor(() =>
@@ -51,7 +51,7 @@ describe('Écran carte', () => {
   });
 
   it('affiche mes adresses publiques et privées et les adresses publiques des autres', async () => {
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
     await waitFor(() => expect(mockAnimateToRegion).toHaveBeenCalled());
 
     expect(mockedService.subscribeToMyAddresses).toHaveBeenCalledWith('user-1', expect.any(Function), expect.any(Function));
@@ -62,32 +62,32 @@ describe('Écran carte', () => {
   });
 
   it("ouvre le détail d'une adresse depuis son repère", async () => {
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
     await waitFor(() => expect(mockAnimateToRegion).toHaveBeenCalled());
 
-    fireEvent(screen.getByTestId('marker-bob-1'), 'calloutPress');
+    await fireEvent(screen.getByTestId('marker-bob-1'), 'calloutPress');
     expect(mockRouter.push).toHaveBeenCalledWith('/address/bob-1');
   });
 
   it("mène à la création d'une adresse", async () => {
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
     await waitFor(() => expect(mockAnimateToRegion).toHaveBeenCalled());
 
-    fireEvent.press(screen.getByTestId('add-address-button'));
+    await fireEvent.press(screen.getByTestId('add-address-button'));
     expect(mockRouter.push).toHaveBeenCalledWith('/address/new');
   });
 
   it('recentre la carte à la demande', async () => {
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
     await waitFor(() => expect(mockAnimateToRegion).toHaveBeenCalledTimes(1));
 
-    fireEvent.press(screen.getByTestId('recenter-button'));
+    await fireEvent.press(screen.getByTestId('recenter-button'));
     expect(mockAnimateToRegion).toHaveBeenCalledTimes(2);
   });
 
   it('prévient si la localisation est refusée et affiche la position par défaut', async () => {
     mockedLocation.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' } as never);
-    renderWithAuth(<MapScreen />);
+    await renderWithAuth(<MapScreen />);
 
     expect(await screen.findByTestId('location-denied')).toBeOnTheScreen();
     expect(screen.getByTestId('map-view')).toHaveProp(

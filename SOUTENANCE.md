@@ -22,14 +22,14 @@ Sommaire :
 ### 1.1 Sur le PC
 
 1. **Git** : https://git-scm.com/download/win (options par défaut).
-2. **Node.js 20.20.2** : https://nodejs.org/dist/v20.20.2/node-v20.20.2-x64.msi
+2. **Node.js 22.22.0** : https://nodejs.org/dist/v22.22.0/node-v22.22.0-x64.msi
 3. **Java 21** (pour les émulateurs Firebase) : [Eclipse Temurin JDK 21](https://adoptium.net/temurin/releases/?version=21), fichier `.msi`, cocher **« Set JAVA_HOME variable »** pendant l'installation.
 4. Dans VS Code : **Terminal > New Terminal**. Si le terminal s'ouvre en zsh/Ubuntu ou en PowerShell : flèche à côté du **+** > **Command Prompt**. Pour en faire le terminal par défaut : **Ctrl+Shift+P** > « Terminal: Select Default Profile » > **Command Prompt**.
 
 Vérifier dans un **nouveau** terminal Command Prompt :
 
 ```bash
-node -v          # v20.20.2
+node -v          # v22.22.0
 java -version    # version 21
 git --version
 ```
@@ -55,6 +55,8 @@ npm run emulators
 ```
 
 `npm run emulators` télécharge les émulateurs Firebase (environ 100 Mo) la première fois : attendre « All emulators ready », puis arrêter avec **Ctrl+C**.
+
+> **Désactiver les mises à jour automatiques de l'App Store** (iPhone > Réglages > App Store > Mises à jour des apps) : Expo Go ne prend en charge que le dernier SDK, et une mise à jour d'Expo Go avant la soutenance empêcherait le projet de s'ouvrir.
 
 ### 1.3 Sur l'iPhone
 
@@ -151,7 +153,7 @@ Attendre « Export complete ». Puis arrêter `demo:prepare` avec **un seul Ctrl
 Les commandes de tests démarrent leurs propres émulateurs : **arrêter `demo:firebase` (ou `demo:prepare`) avant** (sinon « port taken »). Garder les terminaux ouverts, ou faire des captures d'écran, pour les montrer pendant la soutenance.
 
 ```bash
-npm test                 # 202 tests unitaires et fonctionnels
+npm test                 # 203 tests unitaires et fonctionnels
 npm run test:coverage    # idem avec la couverture (~97 %)
 npm run test:firebase    # 41 tests : règles de sécurité + parcours complet sur émulateurs Firebase
 ```
@@ -255,7 +257,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 
 ### 10. Tests — 25 pts (2 à 3 min)
 
-1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (202 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
+1. **Tests unitaires et fonctionnels (10 pts)** : résultat de `npm test` (203 tests) et de la couverture. Ouvrir par exemple `src/screens/__tests__/NewAddressScreen.test.tsx` (création privée / publique) et `src/__tests__/navigation.test.tsx` (routes protégées).
 2. **Tests e2e (10 pts)** : un parcours ouvert dans VS Code (`.maestro/flows/04_adresses_publiques_et_avis.yaml`), et la vidéo Maestro si tu l'as filmée.
 3. **Storybook (5 pts)** : arrêter le terminal 2 (Ctrl+C), lancer `npm run start:storybook` et scanner le nouveau QR code avec l'iPhone : Storybook s'ouvre avec les 11 composants. Pour revenir à l'application : Ctrl+C, `npm run demo:phone` et scanner à nouveau le QR code.
 
@@ -269,7 +271,7 @@ Durée indicative : 12 à 15 minutes. Les libellés entre « » sont ceux de l'a
 | --- | --- |
 | `zsh: command not found: java` (ou `node`), terminal Ubuntu / WSL | Le terminal est dans WSL : revenir côté Windows (encadré de la section 1), terminal **Command Prompt**, projet cloné dans un dossier Windows |
 | PowerShell : « l'exécution de scripts est désactivée sur ce système » | Utiliser le terminal **Command Prompt** (section 1.1), ou exécuter une fois `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
-| « Project is incompatible with this version of Expo Go » | Mettre à jour Expo Go depuis l'App Store (le projet utilise le SDK 57) |
+| « Project is incompatible with this version of Expo Go » | Mettre à jour Expo Go depuis l'App Store (le projet utilise le SDK 58) |
 | Expo Go tourne longtemps puis « Could not connect to the server » | PC et iPhone ne sont pas sur le même réseau, ou l'accès au **réseau local** a été refusé : iPhone > Réglages > **Expo Go** > activer **Réseau local** ; vérifier le pare-feu (section 2) ; essayer le partage de connexion de l'iPhone |
 | Le QR code / la ligne `exp://…` affiche `127.0.0.1`, ou une adresse différente de l'**adresse IPv4** de la carte Wi-Fi donnée par `ipconfig` (sur le partage de connexion de l'iPhone, une adresse `172.20.10.x` est normale et correcte) | Dans le terminal Command Prompt : `ipconfig`, noter l'adresse IPv4 de la carte Wi-Fi, puis par exemple `set REACT_NATIVE_PACKAGER_HOSTNAME=172.20.10.2` (ton adresse, sans espaces) et relancer `npm run demo:phone` dans le **même** terminal (en PowerShell : `$env:REACT_NATIVE_PACKAGER_HOSTNAME="172.20.10.2"`) |
 | Le port 8081 ou 4000 est occupé par `svchost.exe`, ou Safari/Expo Go : « connexion perdue » / « timed out » | Une ancienne redirection de ports vers WSL existe : `netsh interface portproxy show all`, puis (Command Prompt **administrateur**) `netsh interface portproxy delete v4tov4 listenport=8081 listenaddress=0.0.0.0` (idem pour les autres ports listés) |

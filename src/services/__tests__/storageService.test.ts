@@ -13,7 +13,7 @@ jest.mock('firebase/storage', () => ({
 const mockedStorage = storage as jest.Mocked<typeof storage>;
 
 describe('storagePaths', () => {
-  it('range les fichiers par utilisateur', () => {
+  it('range les fichiers par utilisateur', async () => {
     expect(storagePaths.avatar('u1')).toBe('users/u1/avatar.jpg');
     expect(storagePaths.addressPhoto('u1', 'a1')).toBe('addresses/u1/a1.jpg');
     expect(storagePaths.reviewPhoto('a1', 'u2', 'r1')).toBe('reviews/a1/u2/r1.jpg');

@@ -9,8 +9,8 @@ Réponses courtes, à dire avec tes mots. Les fichiers cités permettent de mont
 **Pourquoi Expo plutôt que React Native « nu » (CLI) ?**
 Expo fournit directement les modules dont j'avais besoin (localisation, appareil photo, galerie, carte) sans configuration native, et Expo Go permet de tester sur un vrai téléphone sans compiler l'application. Expo Router apporte en plus une navigation par fichiers avec des routes protégées.
 
-**Pourquoi Node 20.20.2 alors que la consigne demande 20.18.0 ?**
-Pour faire la démo sur iPhone, Expo Go (App Store) n'accepte que le dernier SDK d'Expo, le 57. Ce SDK utilise React Native 0.86, qui exige Node ≥ 20.19.4. J'ai donc pris 20.20.2, qui reste dans la branche LTS 20. La consigne autorise une autre version si elle est documentée : toutes les versions sont dans le README.
+**Pourquoi Node 22 alors que la consigne demande 20.18.0 ?**
+Pour faire la démo sur iPhone, Expo Go (App Store) n'accepte que le dernier SDK d'Expo, le 58, et on ne peut pas installer une version plus ancienne. Ce SDK utilise React Native 0.88, qui exige Node ≥ 22.13. J'ai donc pris Node 22.22.0, une version LTS. La consigne autorise une autre version si elle est documentée : toutes les versions sont dans le README.
 
 **Pourquoi Firebase ?**
 Il couvre tout le back-end demandé sans serveur à écrire : authentification, base de données temps réel (Firestore) et stockage des photos (Cloud Storage). La sécurité est gérée par des règles déclaratives que l'on peut tester.
@@ -107,7 +107,7 @@ Les tests unitaires vérifient une fonction ou un composant isolé (validation, 
 Dans Jest, le SDK Firebase et les services sont remplacés par des simulations (mocks) dans `jest.setup.ts`. Pour vérifier le vrai comportement de Firebase, les tests `npm run test:firebase` tournent sur les émulateurs officiels.
 
 **Combien de tests et quelle couverture ?**
-202 tests unitaires et fonctionnels (environ 97 % de couverture, `npm run test:coverage`), 41 tests sur émulateurs, 4 parcours e2e Maestro et 31 stories Storybook.
+203 tests unitaires et fonctionnels (environ 97 % de couverture, `npm run test:coverage`), 41 tests sur émulateurs, 4 parcours e2e Maestro et 31 stories Storybook.
 
 **Pourquoi Maestro pour les tests e2e ?**
 C'est l'outil recommandé par Expo : les parcours sont écrits en YAML lisible (`.maestro/flows/`), ils fonctionnent avec Expo Go sans configuration native, contrairement à Detox. Ils pilotent un émulateur ou un simulateur.
@@ -129,7 +129,7 @@ Cloud Storage, nécessaire pour les photos, demande désormais le forfait payant
 Les deux sont sur le même réseau (le partage de connexion de l'iPhone). Expo Go charge l'application depuis le PC, et l'app se connecte aux émulateurs Firebase à l'adresse de ce même PC, détectée automatiquement.
 
 **Quelles difficultés avez-vous rencontrées ?**
-La version d'Expo Go sur iPhone, qui m'a obligé à migrer vers le SDK 57. Le coût de Cloud Storage, résolu avec les émulateurs. Et le réseau entre l'iPhone et le PC : sortir de WSL, supprimer d'anciennes redirections de ports, régler le pare-feu. J'ai aussi fait en sorte que les photos restent visibles même si l'adresse IP du PC change.
+La version d'Expo Go sur iPhone, qui m'a obligé à migrer plusieurs fois, jusqu'au SDK 58 (Expo Go s'est mis à jour pendant le projet). Le coût de Cloud Storage, résolu avec les émulateurs. Et le réseau entre l'iPhone et le PC : sortir de WSL, supprimer d'anciennes redirections de ports, régler le pare-feu. J'ai aussi fait en sorte que les photos restent visibles même si l'adresse IP du PC change.
 
 ---
 

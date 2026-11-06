@@ -40,12 +40,12 @@ const storyFiles = {
 describe.each(Object.entries(storyFiles))('Stories %s', (_name, stories) => {
   const composed = Object.entries(composeStories(stories)) as [string, ComponentType][];
 
-  it('contient au moins une story', () => {
+  it('contient au moins une story', async () => {
     expect(composed.length).toBeGreaterThan(0);
   });
 
-  it.each(composed)('rend la story %s', (_storyName, Story) => {
-    const { toJSON } = render(<Story />);
+  it.each(composed)('rend la story %s', async (_storyName, Story) => {
+    const { toJSON } = await render(<Story />);
     expect(toJSON()).toBeTruthy();
   });
 });

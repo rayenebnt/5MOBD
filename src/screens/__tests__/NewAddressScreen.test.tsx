@@ -15,7 +15,7 @@ jest.mock('@/services/addressService', () => ({
 const mockedService = addressService as jest.Mocked<typeof addressService>;
 
 async function renderScreen() {
-  renderWithAuth(<NewAddressScreen />);
+  await renderWithAuth(<NewAddressScreen />);
   // La position actuelle est utilisée comme emplacement par défaut
   await screen.findByTestId('location-picker-marker');
 }
@@ -24,7 +24,7 @@ describe("Création d'une adresse", () => {
   it("exige un nom", async () => {
     await renderScreen();
 
-    fireEvent.press(screen.getByTestId('save-address-button'));
+    await fireEvent.press(screen.getByTestId('save-address-button'));
 
     expect(await screen.findByTestId('address-name-input-error')).toHaveTextContent('Le nom est obligatoire.');
     expect(mockedService.createAddress).not.toHaveBeenCalled();
@@ -33,9 +33,9 @@ describe("Création d'une adresse", () => {
   it('crée une adresse privée par défaut, à la position actuelle', async () => {
     await renderScreen();
 
-    fireEvent.changeText(screen.getByTestId('address-name-input'), 'Chez moi');
-    fireEvent.changeText(screen.getByTestId('address-description-input'), 'Mon adresse secrète');
-    fireEvent.press(screen.getByTestId('save-address-button'));
+    await fireEvent.changeText(screen.getByTestId('address-name-input'), 'Chez moi');
+    await fireEvent.changeText(screen.getByTestId('address-description-input'), 'Mon adresse secrète');
+    await fireEvent.press(screen.getByTestId('save-address-button'));
 
     await waitFor(() =>
       expect(mockedService.createAddress).toHaveBeenCalledWith(currentUser, {
@@ -53,15 +53,15 @@ describe("Création d'une adresse", () => {
   it('crée une adresse publique avec photo à un emplacement choisi sur la carte', async () => {
     await renderScreen();
 
-    fireEvent.changeText(screen.getByTestId('address-name-input'), 'Le Petit Bistrot');
-    fireEvent(screen.getByTestId('address-public-switch'), 'valueChange', true);
+    await fireEvent.changeText(screen.getByTestId('address-name-input'), 'Le Petit Bistrot');
+    await fireEvent(screen.getByTestId('address-public-switch'), 'valueChange', true);
     expect(screen.getByText('Adresse publique')).toBeOnTheScreen();
-    fireEvent.press(screen.getByTestId('address-photo-library'));
+    await fireEvent.press(screen.getByTestId('address-photo-library'));
     await screen.findByTestId('address-photo-preview');
-    fireEvent(screen.getByTestId('location-picker-map'), 'press', {
+    await fireEvent(screen.getByTestId('location-picker-map'), 'press', {
       nativeEvent: { coordinate: { latitude: 48.85, longitude: 2.35 } },
     });
-    fireEvent.press(screen.getByTestId('save-address-button'));
+    await fireEvent.press(screen.getByTestId('save-address-button'));
 
     await waitFor(() =>
       expect(mockedService.createAddress).toHaveBeenCalledWith(currentUser, {
@@ -79,8 +79,8 @@ describe("Création d'une adresse", () => {
     mockedService.createAddress.mockRejectedValueOnce(new Error('réseau'));
     await renderScreen();
 
-    fireEvent.changeText(screen.getByTestId('address-name-input'), 'Chez moi');
-    fireEvent.press(screen.getByTestId('save-address-button'));
+    await fireEvent.changeText(screen.getByTestId('address-name-input'), 'Chez moi');
+    await fireEvent.press(screen.getByTestId('save-address-button'));
 
     expect(await screen.findByTestId('address-submit-error')).toBeOnTheScreen();
     expect(mockRouter.back).not.toHaveBeenCalled();

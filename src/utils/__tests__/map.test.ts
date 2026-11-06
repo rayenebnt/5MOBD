@@ -3,7 +3,7 @@ import { makeAddress } from '@/testing/fixtures';
 import { DEFAULT_DELTA, getMarkerKind, regionFromCoordinates } from '../map';
 
 describe('regionFromCoordinates', () => {
-  it('construit une région centrée sur les coordonnées', () => {
+  it('construit une région centrée sur les coordonnées', async () => {
     expect(regionFromCoordinates({ latitude: 45, longitude: 4 })).toEqual({
       latitude: 45,
       longitude: 4,
@@ -15,7 +15,7 @@ describe('regionFromCoordinates', () => {
 });
 
 describe('getMarkerKind', () => {
-  it('distingue mes adresses publiques, privées et celles des autres', () => {
+  it('distingue mes adresses publiques, privées et celles des autres', async () => {
     expect(getMarkerKind(makeAddress({ ownerId: 'me', isPublic: true }), 'me')).toBe('mine-public');
     expect(getMarkerKind(makeAddress({ ownerId: 'me', isPublic: false }), 'me')).toBe('mine-private');
     expect(getMarkerKind(makeAddress({ ownerId: 'other' }), 'me')).toBe('other');

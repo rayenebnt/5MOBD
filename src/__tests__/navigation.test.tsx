@@ -52,7 +52,7 @@ const routes = {
   'address/[id]': AddressDetailScreen,
 };
 
-function startApp(initialUser: AppUser | null) {
+async function startApp(initialUser: AppUser | null) {
   mockedAuth.subscribeToAuthChanges.mockImplementation((callback) => {
     callback(initialUser);
     return jest.fn();
@@ -73,22 +73,22 @@ beforeEach(() => {
 
 describe('Navigation', () => {
   it("affiche l'écran de connexion quand l'utilisateur n'est pas connecté", async () => {
-    const app = startApp(null);
+    const app = await startApp(null);
 
     expect(await screen.findByTestId('login-submit')).toBeOnTheScreen();
     expect(app.getPathname()).toBe('/login');
   });
 
   it("donne accès à l'inscription depuis la connexion", async () => {
-    const app = startApp(null);
+    const app = await startApp(null);
 
-    fireEvent.press(await screen.findByTestId('go-to-register'));
+    await fireEvent.press(await screen.findByTestId('go-to-register'));
     expect(await screen.findByTestId('register-submit')).toBeOnTheScreen();
     expect(app.getPathname()).toBe('/register');
   });
 
   it('affiche la carte une fois connecté', async () => {
-    const app = startApp(currentUser);
+    const app = await startApp(currentUser);
 
     expect(await screen.findByTestId('map-view')).toBeOnTheScreen();
     expect(app.getPathname()).toBe('/');
@@ -96,28 +96,28 @@ describe('Navigation', () => {
 
   it('se connecte puis se déconnecte', async () => {
     mockedAuth.loginUser.mockResolvedValueOnce(currentUser);
-    const app = startApp(null);
+    const app = await startApp(null);
 
-    fireEvent.changeText(await screen.findByTestId('login-email-input'), 'alice@example.com');
-    fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret1');
-    fireEvent.press(screen.getByTestId('login-submit'));
+    await fireEvent.changeText(await screen.findByTestId('login-email-input'), 'alice@example.com');
+    await fireEvent.changeText(screen.getByTestId('login-password-input'), 'secret1');
+    await fireEvent.press(screen.getByTestId('login-submit'));
 
     expect(await screen.findByTestId('map-view')).toBeOnTheScreen();
 
-    fireEvent.press(screen.getByTestId('tab-profile'));
+    await fireEvent.press(screen.getByTestId('tab-profile'));
     expect(await screen.findByTestId('profile-name')).toHaveTextContent('Alice Martin');
 
     await act(async () => {
-      fireEvent.press(screen.getByTestId('logout-button'));
+      await fireEvent.press(screen.getByTestId('logout-button'));
     });
     await waitFor(() => expect(app.getPathname()).toBe('/login'));
     expect(mockedAuth.logoutUser).toHaveBeenCalled();
   });
 
   it("ouvre le formulaire de création d'adresse depuis la carte", async () => {
-    const app = startApp(currentUser);
+    const app = await startApp(currentUser);
 
-    fireEvent.press(await screen.findByTestId('add-address-button'));
+    await fireEvent.press(await screen.findByTestId('add-address-button'));
     expect(await screen.findByTestId('save-address-button')).toBeOnTheScreen();
     expect(app.getPathname()).toBe('/address/new');
     // L'emplacement par défaut est la position actuelle de l'utilisateur
