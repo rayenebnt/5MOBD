@@ -70,7 +70,11 @@ export default function AddressDetailScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      contentInsetAdjustmentBehavior="automatic"
+      automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="handled">
       <Stack.Screen options={{ title: address.name }} />
 
       {address.photoURL ? (

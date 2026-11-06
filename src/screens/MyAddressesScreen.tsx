@@ -61,6 +61,7 @@ export default function MyAddressesScreen() {
       ) : null}
 
       <FlatList
+        contentInsetAdjustmentBehavior="automatic"
         testID="my-addresses-list"
         data={visibleAddresses}
         keyExtractor={(address) => address.id}

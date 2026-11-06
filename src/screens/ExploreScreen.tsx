@@ -23,6 +23,7 @@ export default function ExploreScreen() {
         </Text>
       ) : null}
       <FlatList
+        contentInsetAdjustmentBehavior="automatic"
         testID="explore-list"
         data={addresses}
         keyExtractor={(address) => address.id}

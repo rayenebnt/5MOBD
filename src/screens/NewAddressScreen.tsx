@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { LocationPicker } from '@/components/LocationPicker';
@@ -65,53 +65,53 @@ export default function NewAddressScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
+    <ScrollView
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      contentInsetAdjustmentBehavior="automatic"
+      automaticallyAdjustKeyboardInsets
     >
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <TextField
-          testID="address-name-input"
-          label="Nom"
-          value={name}
-          onChangeText={setName}
-          error={errors.name}
-          placeholder="Ex. : Le petit bistrot"
-        />
-        <TextField
-          testID="address-description-input"
-          label="Description"
-          value={description}
-          onChangeText={setDescription}
-          error={errors.description}
-          placeholder="Pourquoi est-ce une bonne adresse ?"
-          multiline
-        />
-        <PhotoPicker testID="address-photo" label="Photo" uri={photoUri} onChange={setPhotoUri} />
-        <VisibilitySwitch testID="address-public-switch" isPublic={isPublic} onChange={setIsPublic} />
-        <LocationPicker
-          value={coordinates}
-          onChange={setCoordinates}
-          center={location ?? DEFAULT_COORDINATES}
-          error={errors.location}
-        />
+      <TextField
+        testID="address-name-input"
+        label="Nom"
+        value={name}
+        onChangeText={setName}
+        error={errors.name}
+        placeholder="Ex. : Le petit bistrot"
+      />
+      <TextField
+        testID="address-description-input"
+        label="Description"
+        value={description}
+        onChangeText={setDescription}
+        error={errors.description}
+        placeholder="Pourquoi est-ce une bonne adresse ?"
+        multiline
+      />
+      <PhotoPicker testID="address-photo" label="Photo" uri={photoUri} onChange={setPhotoUri} />
+      <VisibilitySwitch testID="address-public-switch" isPublic={isPublic} onChange={setIsPublic} />
+      <LocationPicker
+        value={coordinates}
+        onChange={setCoordinates}
+        center={location ?? DEFAULT_COORDINATES}
+        error={errors.location}
+      />
 
-        {submitError ? (
-          <Text testID="address-submit-error" style={styles.submitError}>
-            {submitError}
-          </Text>
-        ) : null}
+      {submitError ? (
+        <Text testID="address-submit-error" style={styles.submitError}>
+          {submitError}
+        </Text>
+      ) : null}
 
-        <Button
-          testID="save-address-button"
-          title="Enregistrer l'adresse"
-          icon="checkmark-circle-outline"
-          onPress={onSubmit}
-          loading={saving}
-        />
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <Button
+        testID="save-address-button"
+        title="Enregistrer l'adresse"
+        icon="checkmark-circle-outline"
+        onPress={onSubmit}
+        loading={saving}
+      />
+    </ScrollView>
   );
 }
 

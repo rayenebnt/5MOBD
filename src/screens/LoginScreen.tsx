@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/Button';
@@ -37,55 +37,55 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
+      <ScrollView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
       >
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.header}>
-            <Ionicons name="location" size={56} color={colors.primary} />
-            <Text style={styles.title}>Mes Bonnes Adresses</Text>
-            <Text style={styles.subtitle}>Connectez-vous pour retrouver vos adresses.</Text>
-          </View>
+        <View style={styles.header}>
+          <Ionicons name="location" size={56} color={colors.primary} />
+          <Text style={styles.title}>Mes Bonnes Adresses</Text>
+          <Text style={styles.subtitle}>Connectez-vous pour retrouver vos adresses.</Text>
+        </View>
 
-          <TextField
-            testID="login-email-input"
-            label="E-mail"
-            value={email}
-            onChangeText={setEmail}
-            error={errors.email}
-            autoCapitalize="none"
-            autoComplete="email"
-            keyboardType="email-address"
-            placeholder="vous@exemple.com"
-          />
-          <TextField
-            testID="login-password-input"
-            label="Mot de passe"
-            value={password}
-            onChangeText={setPassword}
-            error={errors.password}
-            secureTextEntry
-            autoComplete="password"
-            placeholder="Votre mot de passe"
-          />
+        <TextField
+          testID="login-email-input"
+          label="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          error={errors.email}
+          autoCapitalize="none"
+          autoComplete="email"
+          keyboardType="email-address"
+          placeholder="vous@exemple.com"
+        />
+        <TextField
+          testID="login-password-input"
+          label="Mot de passe"
+          value={password}
+          onChangeText={setPassword}
+          error={errors.password}
+          secureTextEntry
+          autoComplete="password"
+          placeholder="Votre mot de passe"
+        />
 
-          {submitError ? (
-            <Text testID="login-error" style={styles.submitError}>
-              {submitError}
-            </Text>
-          ) : null}
+        {submitError ? (
+          <Text testID="login-error" style={styles.submitError}>
+            {submitError}
+          </Text>
+        ) : null}
 
-          <Button testID="login-submit" title="Se connecter" onPress={onSubmit} loading={loading} />
+        <Button testID="login-submit" title="Se connecter" onPress={onSubmit} loading={loading} />
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Pas encore de compte ?</Text>
-            <Link href="/register" testID="go-to-register" style={styles.link}>
-              Créer un compte
-            </Link>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Pas encore de compte ?</Text>
+          <Link href="/register" testID="go-to-register" style={styles.link}>
+            Créer un compte
+          </Link>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

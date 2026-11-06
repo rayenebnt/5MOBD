@@ -16,6 +16,7 @@ function RootNavigator() {
     <Stack
       screenOptions={{
         headerTintColor: colors.primary,
+        headerBackButtonDisplayMode: 'minimal',
         headerTitleStyle: { color: colors.text },
         contentStyle: { backgroundColor: colors.background },
       }}

@@ -48,7 +48,11 @@ export default function ProfileScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      contentInsetAdjustmentBehavior="automatic"
+      automaticallyAdjustKeyboardInsets>
       <View style={styles.card}>
         <View style={styles.avatarWrapper}>
           <Avatar testID="profile-avatar" uri={user.photoURL} name={user.displayName} size={120} />
